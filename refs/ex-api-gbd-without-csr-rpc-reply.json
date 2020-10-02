@@ -1,0 +1,31 @@
+HTTP/1.1 400 Bad Request
+Date: Sat, 31 Oct 2015 17:02:40 GMT
+Server: example-server
+Content-Type: application/yang.data+json
+
+{
+  "ietf-restconf:errors" : {
+    "error" : [
+      {
+        "error-type": "application",
+        "error-tag": "missing-attribute",
+        "error-message": "Missing input parameter",
+        "error-info": {
+          "ietf-sztp-csr:request-info": {
+            "key-generation": {
+              "selected-algorithm": {
+                "algorithm-identifier": "base64EncodedValue=="
+              }
+            },
+            "csr-generation": {
+              "selected-format": {
+                "format-identifier": "ietf-sztp-csr:cmc"
+              }
+            },
+            "cert-req-info": "base64EncodedValue=="
+          }
+        }
+      }
+    ]
+  }
+}

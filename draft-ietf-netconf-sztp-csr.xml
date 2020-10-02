@@ -1,0 +1,598 @@
+<?xml version='1.0'?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?rfc toc="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes" ?>
+<?rfc compact="yes"?>
+<?rfc subcompact="no"?>
+<?rfc linkmailto="no" ?>
+<?rfc editing="no" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes"?>
+<?rfc rfcedstyle="yes"?>
+<?rfc-ext allow-markup-in-artwork="yes" ?>
+<?rfc-ext include-index="no" ?>
+<!--<?rfc strict="no"?> -->
+
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude"
+     category="std"
+     ipr="trust200902"
+     docName="draft-ietf-netconf-sztp-csr-latest"
+     updates="8572">
+    <front>
+        <title abbrev="Conveying a CSR in an SZTP Request">Conveying a Certificate Signing Request (CSR) in a Secure Zero Touch Provisioning (SZTP) Bootstrapping Request</title>
+        <author initials="K." surname="Watsen" fullname="Kent Watsen">
+            <organization>Watsen Networks</organization>
+            <address>
+                <email>kent+ietf@watsen.net</email>
+            </address>
+        </author>
+        <author initials="R." surname="Housley" fullname="Russ Housley">
+            <organization>Vigil Security, LLC</organization>
+            <address>
+                <email>housley@vigilsec.com</email>
+            </address>
+        </author>
+        <author initials="S." surname="Turner" fullname="Sean Turner">
+            <organization>sn3rd</organization>
+            <address>
+                <email>sean@sn3rd.com</email>
+            </address>
+        </author>
+        <date/>
+        <area>Operations</area>
+        <workgroup>NETCONF Working Group</workgroup>
+        <keyword>zerotouch</keyword>
+        <keyword>bootstrap</keyword>
+        <keyword>sztp</keyword>
+        <keyword>ztp</keyword>
+        <keyword>csr</keyword>
+        <keyword>pkcs#10</keyword>
+        <keyword>p10</keyword>
+        <keyword>p10cr</keyword>
+        <keyword>cmc</keyword>
+        <keyword>cmp</keyword>
+        <abstract>
+          <t>This draft extends the "get-bootstrapping-data" RPC defined in
+            RFC 8572 to include an optional certificate signing request (CSR),
+            enabling a bootstrapping device to additionally obtain an identity
+            certificate (e.g., an LDevID, from IEEE 802.1AR) as part of the 
+            "onboarding information" response provided in the RPC-reply.</t>
+        </abstract>
+        <note title="Editorial Note (To be removed by RFC Editor)">
+
+          <t>This draft contains many placeholder values that need to be replaced
+          with finalized values at the time of publication.  This note summarizes
+          all of the substitutions that are needed.  No other
+          RFC Editor instructions are specified elsewhere in this document.</t>
+
+          <t>Artwork in this document contains shorthand references to drafts in
+          progress.  Please apply the following replacements:
+            <list  style="symbols">
+              <t><spanx style="verb">XXXX</spanx> --&gt; the assigned numerical RFC value for this draft</t>
+              <t><spanx style="verb">AAAA</spanx> --&gt; the assigned RFC value for I-D.ietf-netconf-crypto-types</t>
+            </list>
+          </t>
+
+          <t>Artwork in this document contains a placeholder value for the publication date of this
+          draft.  Please apply the following replacement:
+            <list  style="symbols">
+              <t><spanx style="verb">YYYY-MM-DD</spanx> --&gt; the publication date of this draft</t>
+            </list>
+          </t>
+
+          <t>This document contains references to other drafts in progress, both in
+          the Normative References section, as well as in body text throughout.
+          Please update the following references to reflect their final RFC assignments:
+            <list style="symbols">
+              <t>I-D.ietf-netconf-crypto-types</t>
+              <t>I-D.ietf-netconf-keystore</t>
+              <t>I-D.ietf-netconf-trust-anchors</t>
+              <t>I-D.ietf-netmod-factory-default</t>
+            </list>
+          </t>
+
+          <!--
+          <t>The following one Appendix section is to be removed prior to publication:
+            <list  style="symbols">
+              <t>Appendix A.  Change Log</t>
+            </list>
+          </t>
+          -->
+        </note>
+    </front>
+
+    <middle>
+      <section title="Introduction">
+
+        <section title="Overview">
+          <t>This draft extends the "get-bootstrapping-data" RPC defined in
+            <xref target="RFC8572"/> to include an optional certificate
+            signing request (CSR) <xref target="RFC2986"/>, enabling a
+            bootstrapping device to additionally obtain an identity
+            certificate (e.g., an LDevID <xref target="Std-802.1AR-2018"/>)
+            as part of the "onboarding information" response provided in
+            the RPC-reply.</t>
+        </section>
+
+        <section title="Terminology" anchor="terminology">
+          <t>This document uses the following terms from <xref target="RFC8572"/>:</t>
+          <ul spacing="compact">
+            <li>Bootstrap Server</li>
+            <li>Bootstrapping Data</li>
+            <li>Conveyed Information</li>
+            <li>Device</li>
+            <li>Manufacturer</li>
+            <li>Onboarding Information</li>
+            <li>Signed Data</li>
+          </ul>
+
+          <t>This document defines the following new terms:</t>
+          <!--<dl hanging="false"> FIXME: xml2rfc fails -->
+          <dl>
+            <dt>SZTP-client</dt>
+            <dd>The term "SZTP-client" refers to a "device" that is using a
+              "bootstrap server" as a source of "bootstrapping data".</dd>
+            <dt>SZTP-server</dt>
+            <dd>The term "SZTP-server" is an alternative term for "bootstrap
+              server" that is symmetric with the "SZTP-client" term.</dd>
+            <!--
+            <list style="hanging" hangIndent="4">
+              <t hangText="SZTP-client:">The term "SZTP-client" refers
+                to a "device" that is using a "bootstrap server" as a
+                source of "bootstrapping data".</t>
+              <t hangText="SZTP-server:">The term "SZTP-server" refers
+                to a "bootstrap server".</t>
+              </list>
+            -->
+          </dl>
+        </section>
+
+        <section title="Requirements Language" anchor="requirements-language">
+          <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+          NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
+          "MAY", and "OPTIONAL" in this document are to be interpreted as
+          described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/>
+          when, and only when, they appear in all capitals, as shown here.</t>
+        </section>
+
+      </section>  <!-- end Introduction -->
+
+      <section title='The "ietf-sztp-csr" Module'>
+
+        <t>This section defines a YANG 1.1 <xref target="RFC7950"/> module
+          that augments the "ietf-sztp-bootstrap-server" module defined in
+          <xref target="RFC8572"/> and defines a YANG "structure".</t>
+        <t>The augmentation adds two nodes ("csr-support" and "csr") to
+          the "input" parameter of the "get-bootstrapping-data" RPC
+          defined in <xref target="RFC8572"/>.</t>
+        <t>The YANG structure, "request-info", defines data returned in the
+          "error-info" node defined in <relref section="7.1" target="RFC8040"/>.</t>
+
+        <section title="Data Model Overview">
+          <t>The following tree diagram <xref target="RFC8340"/> illustrates the 
+            "ietf-sztp-csr" module. The diagram shows the definition of an
+            augmentation adding descendent nodes "csr-support" and "csr"
+            and the definition of a structure called "request-info".</t>
+          <t>In the order of their intended use:</t>
+          <ul>
+            <li>The "csr-support" node is used by the SZTP-client to signal
+              to the SZTP-server that it supports the ability the generate CSRs,
+              per this specification.  The "csr-support" parameter carries
+              details regarding the SZTP-client's ability to generate CSRs.</li>
+            <li>The "request-info" structure is used by the SZTP-server to signal back to
+              the SZTP-client its desire to sign a CSR.  The "request-info" structure
+              additionally communicates details about the CSR the SZTP-client is to
+              generate.</li>
+            <li>The "csr" node is used by the SZTP-client to communicate
+              its CSR to the SZTP-server. Not shown is how the SZTP-server
+              communicates the signed certificate to the SZTP-client; how to
+              do this is discussed later in this document.</li>
+          </ul>
+          <t>
+            <figure>
+              <artwork name="ietf-sztp-csr-tree.txt"><![CDATA[
+INSERT_TEXT_FROM_FILE(refs/ietf-sztp-csr-tree.txt)
+]]></artwork>
+            </figure>
+          </t>
+          <t>To further illustrate how the augmentation and structure defined
+            by the "ietf-sztp-csr" module are used, below are two additional
+            tree diagrams showing these nodes placed where they are used.</t>
+          <t>The following tree diagram <xref target="RFC8340"/> illustrates SZTP's 
+            "get-bootstrapping-data" RPC with the augmentation in place.</t>
+          <t>
+            <figure>
+              <artwork name="ietf-sztp-csr-api-n-csr-tree.txt"><![CDATA[
+INSERT_TEXT_FROM_FILE(refs/ietf-sztp-api-n-csr-tree.txt)
+]]></artwork>
+            </figure>
+          </t>
+          <t>The following tree diagram <xref target="RFC8340"/> illustrates RESTCONF's
+            "errors" RPC-reply message with the "request-info" structure in place.</t>
+          <t>
+            <figure>
+              <artwork name="ietf-sztp-csr-errors-n-struct-tree.txt"><![CDATA[
+INSERT_TEXT_FROM_FILE(refs/ietf-sztp-csr-errors-n-struct-tree.txt)
+]]></artwork>
+            </figure>
+          </t>
+        </section>
+
+        <section title="Example Usage">
+
+          <aside>
+            <t>The examples below are encoded using JSON, but they could
+              equally well be encoded using XML, as is supported by SZTP.</t>
+          </aside>
+
+          <t>An SZTP-client implementing this specification would signal
+            to the bootstrap server its willingness to generate a CSR by
+            including the "csr-support" node in its "get-bootstrapping-data"
+            RPC, as illustrated below.</t>
+          <t>
+            <figure>
+              <preamble>REQUEST</preamble>
+              <artwork name="ex-api-gbd-without-csr-rpc.json"><![CDATA[
+INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-without-csr-rpc.json)
+]]></artwork>
+            </figure>
+          </t>
+
+          <t>Assuming the SZTP-server wishes to prompt the SZTP-client to
+            provide a CSR, then it would respond with an HTTP 400 (Bad Request)
+            error code:</t>
+          <t>
+            <figure>
+              <preamble>RESPONSE</preamble>
+              <artwork name="ex-api-gbd-without-csr-rpc-reply.json"><![CDATA[
+INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-without-csr-rpc-reply.json)
+]]></artwork>
+            </figure>
+          </t>
+
+          <t>Upon being prompted to provide a CSR, the SZTP-client would
+            POST another "get-bootstrapping-data" request, but this time
+            including the "csr" node to convey its CSR to the SZTP-server:</t>
+          <t>
+            <figure>
+              <preamble>REQUEST</preamble>
+              <artwork name="ex-api-gbd-with-csr-rpc.json"><![CDATA[
+INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-with-csr-rpc.json)
+]]></artwork>
+            </figure>
+          </t>
+
+          <t>The SZTP-server responds with "onboarding-information" (conveyed
+            encoded inside the "conveyed-information" node) containing a signed
+            identity certificate for the CSR provided by the SZTP-client:</t>
+          <t>
+            <figure>
+              <preamble>RESPONSE</preamble>
+              <artwork name="ex-api-gbd-with-csr-rpc-reply.json"><![CDATA[
+INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-with-csr-rpc-reply.json)
+]]></artwork>
+            </figure>
+          </t>
+          <t>How the signed certificate is conveyed inside the onboarding information
+            is outside the scope of this document.  Some implementations may choose
+            to convey it inside a script (e.g., SZTP's "pre-configuration-script"),
+            while other implementations convey it inside the SZTP "configuration"
+            node.</t>
+          <t>Following are two examples of conveying the signed certificate inside
+            the "configuration" node.  Both examples assume that the SZTP-client
+            understands the "ietf-keystore" module defined in
+            <xref target="I-D.ietf-netconf-keystore"/>.</t>
+          <t>This first example illustrates the case where the signed certificate is
+            for the same asymmetric key used by the SZTP-client's manufacturer-generated
+            identity certificate (e.g., an IDevID).  As such, the configuration needs
+            to associate the newly signed certificate with the existing asymmetric
+            key:</t>
+          <t>
+            <figure>
+              <artwork name="ex-keystore-ldevid-same-key.json"><![CDATA[
+INSERT_TEXT_FROM_FILE(refs/ex-keystore-ldevid-same-key.json)
+]]></artwork>
+            </figure>
+          </t>
+
+          <t>This second example illustrates the case where the signed certificate is
+            for a newly generated asymmetric key.  As such, the configuration needs
+            to associate the newly signed certificate with the newly generated
+            asymmetric key:</t>
+          <t>
+            <figure>
+              <artwork name="ex-keystore-ldevid-new-key.json"><![CDATA[
+INSERT_TEXT_FROM_FILE(refs/ex-keystore-ldevid-new-key.json)
+]]></artwork>
+            </figure>
+          </t>
+          <t>In addition to configuring the signed certificate, it is often
+            necessary to also configure the Issuer's signing certificate
+            so that the the device (i.e., STZP-client) can authenticate
+            certificates presented by peer devices signed by the same
+            issuer as its own.  While outside the scope of this document,
+            one way to do this would be to use the "ietf-truststore" module
+            defined in <xref target="I-D.ietf-netconf-trust-anchors"/>.</t>
+
+        </section>  <!-- Example Usage -->
+
+        <section title="YANG Module" anchor="yang-module">
+          <t>This module augments an RPC defined in <xref target="RFC8572"/>, uses
+            a data type defined in <xref target="I-D.ietf-netconf-crypto-types"/>,
+            has an normative references to <xref target="RFC2986"/> and
+            <xref target="ITU.X690.2015"/>, and an informative reference
+            to <xref target="Std-802.1AR-2018"/>.</t>
+          <t>
+            <figure>
+              <preamble>&lt;CODE BEGINS&gt; file "ietf-sztp-csr@YYYY-MM-DD.yang"</preamble>
+              <artwork name="ietf-sztp-csr@YYYY-MM-DD.yang"><![CDATA[
+INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
+]]></artwork>
+              <postamble>&lt;CODE ENDS&gt;</postamble>
+            </figure>
+          </t>
+        </section> <!-- YANG Module -->
+      </section>
+
+      <section title="Security Considerations" anchor="sec-con">
+        <t>This document builds on top of the solution presented in
+        <xref target="RFC8572"/> and therefore all the Security
+          Considerations discussed in RFC 8572 apply here as well.</t> 
+        <section title="SZTP-Client Considerations">
+          <section title="Ensuring the Integrity of Asymmetric Private Keys">
+            <t>The private key the SZTP-client uses for the dynamically-generated
+              identity certificate MUST be protected from inadvertent disclosure
+              in order to prevent identity fraud.</t>
+            <t>The security of this private key is essential in order to
+              ensure the associated identity certificate can be used as a
+              root of trust.</t>
+            <t>It is RECOMMENDED that devices are manufactured with an HSM
+              (hardware security module), such as a TPM (trusted platform
+              module), to generate and forever contain the private key within
+              the security perimeter of the HSM.  In such cases, the private
+              key, and its associated certificates, MAY have long validity
+              periods.</t>
+            <t>In cases where the device does not possess an HSM, or otherwise
+              is unable to use an HSM for the private key, it is RECOMMENDED
+              to regenerate the private key (and associated identity
+              certificates) periodically.  Details for how to generate a new
+              private key and associate a new identity certificate are outside
+              the scope of this document.</t>
+          </section>
+          <section title="Reuse of a Manufacturer-generated Private Key">
+            <t>It is RECOMMENDED in <xref target="RFC8572"/> that devices are
+              shipped from manufacturing with a secure device identity certificate
+              (e.g., an IDevID, from <xref target="Std-802.1AR-2018"/>).  It is
+              also RECOMMENDED that the private key for these necessarily long-lived
+                certificates be stored in an HSM, such as a TPM.  Lastly, per the
+
+                FIXME: guy says that the the keys/certs aren't always stored in the TPM
+                (see private email from Aug 13th)
+
+              previous consideration, when devices generate a new private key, it
+              is also RECOMMENDED that the private key is protected by the HSM.</t>
+            <t>However, it is understood that space on an HSM chip may be limited,
+              potentially to the point of not being able to store an additional
+              private key for the CSR described in this document, and that it
+              may not be possible to store hardware-protected keys outside the
+              TPM (e.g., a TPM-encrypted key stored in non-volatile memory).
+              In such cases, it is RECOMMENDED to reuse the existing
+              hardware-protected private key rather than generate a second
+              private key outside of protection afforded by the hardware.</t>
+          </section>
+          <section title="Replay Attack Protection">
+            <t>This RFC enables an SZTP-client to announce an ability to
+              generate new key to use for its CSR.</t>
+            <t>When the SZTP-server responds with a request for the device
+              to generate a new key, it is essential that the device actually
+              generates a new key.</t>
+            <t>Generating a new key each time enables the random bytes used
+              to create the key to serve the dual-purpose of also acting like
+              a "nonce" used in other mechanisms to detect replay attacks.</t>
+            <t>When a fresh public/private key pair is generated for the
+              request, confirmation to the SZTP-client that the response
+              has not been replayed is enabled by the SZTP-client's fresh 
+              public key appearing in the signed certificate provided by
+              the SZTP-server.</t>
+            <t>When a public/private key pair associated with the IDevID
+              used for the request, there may not be confirmation to the
+              SZTP-client that the response has not been replayed; however,
+              the worst case result is a lost certificate that is associated
+              to the private key known only to the SZTP-client.</t>
+          </section>
+          <section title="Connecting to an Untrusted Bootstrap Server" anchor="untrusted">
+            <t><xref target="RFC8572"/> allows SZTP-clients to connect
+              to untrusted SZTP-servers, by blindly authenticating the
+              SZTP-server's TLS end-entity certificate.</t>
+            <t>As is discussed in <relref section="9.5" target="RFC8572"/>,
+              in such cases the SZTP-client MUST assert that the
+              bootstrapping data returned is signed, if the SZTP-client
+              is to trust it.</t>
+            <t>However, the HTTP error message used in this document
+              cannot be signed data, as described in RFC 8572.</t>
+            <t>Therefore, the solution presented in this document
+              cannot be used when the SZTP-client connects to an
+              untrusted SZTP-server.</t>
+            <t>Consistent with the recommendation presented in 
+            <relref section="9.6" target="RFC8572"/>, SZTP-clients
+              SHOULD NOT passed the "csr-support" input parameter
+              to an untrusted SZTP-server.  SZTP-clients SHOULD
+              pass instead the "signed-data-preferred" input
+              parameter, as discussed in <relref section="B"
+              target="RFC8572"/>.</t>
+          </section>
+          <section title="Selecting the Best Origin Authentication Mechanism">
+            <t>When generating a new key, it is important that the client
+              be able to provide additional proof to the CA that it was
+              the entity that generated the key.</t>
+            <t>All of the certificate request formats defined in this
+              document (e.g., CMC, CMP, etc.), not including a raw PKCS#10,
+              support origin authentication.</t>
+            <t>These formats support origin authentication using both
+              PKI and shared secret.</t>
+            <t>Typically only one possible origin authentication
+              mechanism can possibly be used but, in the case that the
+              SZTP-client authenticates itself using both TLS-level
+              (e.g., IDevID) and HTTP-level credentials (e.g., Basic), 
+              as is allowed by <relref section="5.3" target="RFC8572"/>,
+              then the SZTP-client may need to choose between the two
+              options.</t>
+            <t>In the case the SZTP-client must choose between the
+              asymmetric key option versus a shared secret for origin
+              authentication, it is RECOMMENDED that the SZTP-client
+              choose using the asymmetric key option.</t>
+          </section>
+          <section title="Clearing the Private Key and Associated Certificate">
+            <t>Unlike a manufacturer-generated identity certificate (e.g., IDevID),
+              the deployment-generated identity certificate (e.g., LDevID) and
+              the associated private key (assuming a new private key was generated
+              for the purpose), are considered user data and SHOULD be cleared
+              whenever the device is reset to its factory default state,
+              such as by the "factory-reset" RPC defined in
+              <xref target="I-D.ietf-netmod-factory-default"/>.</t>
+          </section>
+        </section>
+        <section title="SZTP-Server Considerations">
+          <section title="Conveying Proof of Possession to a CA">
+            <!--<t>FIXME: Note that RFC 4210 seems most similar! - E.7 and D.4?</t>-->
+          </section>
+          <section title="Supporting SZTP-Clients that don't trust the SZTP-Server">
+            <t><xref target="RFC8572"/> allows SZTP-clients to connect
+              to untrusted SZTP-servers, by blindly authenticating the
+              SZTP-server's TLS end-entity certificate.</t>
+            <t>As is recommended in <xref target="untrusted"/> in this
+              document, in such cases, SZTP-clients SHOULD pass the
+              "signed-data-preferred" input parameter.</t>
+            <t>The reciprocal of this statement is that SZTP-servers,
+              wanting to support SZTP-clients that don't trust them,
+              SHOULD support the "signed-data-preferred" input parameter,
+              as discussed in <relref section="B" target="RFC8572"/>.</t>
+          </section>
+          <section title='YANG Module Considerations'>
+            <t>The recommended format for documenting the Security
+              Considerations for YANG modules is described in <relref
+              section="3.7" target="RFC8407"/>.  However, the module
+              defined in this document only augments two input parameters
+              into the "get-bootstrapping-data" RPC in <xref
+              target="RFC8572"/>, and therefore only needs to point
+              to the relevant Security Considerations sections in
+              that RFC.</t>
+            <list style="symbols">
+              <t>Security considerations for the "get-bootstrapping-data" RPC
+                are described in <relref section="9.16" target="RFC8572"/>.</t>
+              <t>Security considerations for the "input" parameters passed inside the
+                "get-bootstrapping-data" RPC are described in <relref section="9.6"
+                  target="RFC8572"/>.</t>
+            </list>
+          </section>
+        </section>
+      </section>  <!-- end Security Considerations -->
+
+      <section title="IANA Considerations" anchor="iana-considerations">
+        <section title='The "IETF XML" Registry'>
+          <t>This document registers one URI in the "ns" subregistry of
+            the IETF XML Registry <xref target="RFC3688"/> maintained at 
+            <eref target="https://www.iana.org/assignments/xml-registry/xml-registry.xhtml#ns"/>.  
+            Following the format in <xref target="RFC3688"/>, the following
+            registration is requested:</t>
+          <t>
+            <figure>
+                <artwork><![CDATA[
+URI: urn:ietf:params:xml:ns:yang:ietf-sztp-csr
+Registrant Contact: The NETCONF WG of the IETF.
+XML: N/A, the requested URI is an XML namespace.
+]]></artwork>
+            </figure>
+          </t>
+        </section>
+        <section title='The "YANG Module Names" Registry'>
+          <t>This document registers one YANG module in the YANG Module
+            Names registry <xref target="RFC6020"/> maintained at
+            <eref target="https://www.iana.org/assignments/yang-parameters/yang-parameters.xhtml"/>.
+            Following the format defined in <xref target="RFC6020"/>, the below
+            registration is requested:</t>
+          <t>
+            <figure>
+                <artwork><![CDATA[
+name:      ietf-sztp-csr
+namespace: urn:ietf:params:xml:ns:yang:ietf-sztp-csr
+prefix:    sztp-csr
+reference: RFC XXXX
+]]></artwork>
+            </figure>
+          </t>
+        </section>
+      </section>
+
+    </middle>
+
+    <back>
+      <references title="Normative References">
+        <?rfc include="reference.RFC.2119.xml"?>
+        <?rfc include="reference.RFC.2986.xml"?>
+        <?rfc include="reference.RFC.6020.xml"?>
+        <?rfc include="reference.RFC.7950.xml"?>
+        <?rfc include="reference.RFC.8040.xml"?>
+        <?rfc include="reference.RFC.8174.xml"?>
+        <?rfc include="reference.RFC.8572.xml"?>
+        <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netconf-crypto-types.xml"/>
+
+        <!-- THE FOLLOWING LINE DOESN'T RESOLVE FOR SOME REASON:
+             <?rfc include="_reference.ITU.X690.2015.xml"?> -->
+        <!-- THE FOLLOWING IS COPIED FROM RFC 8366 -->
+        <reference anchor="ITU.X690.2015" target="https://www.itu.int/rec/T-REC-X.690/">
+          <front>
+            <title>Information Technology - ASN.1 encoding rules: Specification of Basic
+            Encoding Rules (BER), Canonical Encoding Rules (CER) and Distinguished
+            Encoding Rules (DER)</title>
+            <author>
+              <organization>International Telecommunication Union</organization>
+            </author>
+            <date month="August" year="2015" />
+          </front>
+          <seriesInfo name="ITU-T Recommendation X.690," value="ISO/IEC 8825-1" />
+	    </reference>
+
+      </references>
+
+      <references title="Informative References">
+        <reference anchor="Std-802.1AR-2018" target="http://standards.ieee.org/findstds/standard/802.1AR-2018.html">
+          <front>
+            <title>IEEE Standard for Local and metropolitan area networks - Secure Device Identity</title>
+            <author fullname="WG802.1 - Higher Layer LAN Protocols Working Group">
+               <organization>IEEE SA-Standards Board</organization>
+            </author>
+            <date day="14" month="June" year="2018"/>
+          </front>
+        </reference>
+
+        <?rfc include="reference.RFC.3688.xml"?>
+        <?rfc include="reference.RFC.8340.xml"?>
+        <?rfc include="reference.RFC.8407.xml"?>
+        <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netconf-keystore.xml"/>
+        <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netconf-trust-anchors.xml"/>
+        <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netmod-factory-default.xml"/>
+      </references>
+
+      <!--
+      <section title="Change Log">
+        <section title="00 to 01">
+          <t>
+            <list style="symbols">
+            </list>
+            </t>
+        </section>
+      </section>
+      -->
+
+      <!--
+      <section title="Acknowledgements" numbered="no">
+        <t>The authors would like to thank for following for
+        lively discussions on list and in the halls (ordered
+        by last name):
+        </t>
+      </section>
+      -->
+    </back>
+</rfc>

@@ -1,0 +1,15 @@
+POST /restconf/operations/ietf-sztp-bootstrap-server:get-bootstrapping-data HTTP/1.1
+HOST: example.com
+Content-Type: application/yang.data+json
+
+{
+  "ietf-sztp-bootstrap-server:input" : {
+    "hw-model": "model-x",
+    "os-name": "vendor-os",
+    "os-version": "17.3R2.1",
+    "nonce": "extralongbase64encodedvalue=",
+    "ietf-sztp-csr:csr": {
+      "p10": "base64encodedvalue=="
+    }
+  }
+}
