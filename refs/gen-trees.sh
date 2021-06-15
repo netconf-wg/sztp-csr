@@ -1,14 +1,14 @@
 echo "Generating tree diagrams..."
 
 # print just the augment tree (yanglint's output is less cluttered)
-yanglint -f tree ../ietf-sztp-csr\@*.yang > ietf-sztp-csr-tree.txt 
+pyang -f tree ../ietf-sztp-csr\@*.yang > ietf-sztp-csr-tree.txt 
 
 # append the sx:structure to the module tree (requires script-fu!)
 name=`ls -1 ../ietf-sztp-csr\@*.yang`
 mv $name $name.sav
 sed -e 's/sx:structure/container/' -e 's/request-info {/request-info { config false;/' $name.sav > $name
 echo "" >> ietf-sztp-csr-tree.txt
-yanglint -f tree --tree-path /request-info $name | sed -e '/module/d' -e 's/+--ro request-info/structure: request-info/' -e 's/--ro/--/' >> ietf-sztp-csr-tree.txt
+yanglint -f tree --tree-path /request-info $name | sed -e '/module/d' -e 's/+--ro request-info/structure: request-info/' >> ietf-sztp-csr-tree.txt
 mv $name.sav $name
 
 # print the get-bootstrapping-data rpc + augments

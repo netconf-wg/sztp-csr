@@ -71,6 +71,24 @@ if [ $exit_code -ne 0 ]; then
 fi
 printf "okay.\n"
 
+printf "validating ex-api-gbd-without-csr-rpc-reply.json's inner payload..."
+name=`ls -1 ../ietf-sztp-csr\@*.yang | sed -e 's/\.\.\///'`
+sed -e 's/sx:structure/container/' ../ietf-sztp-csr\@*.yang > $name 
+command="yanglint -s $name ex-api-gbd-without-csr-rpc-reply-inner-payload.json"
+response=`$command 2>&1`
+exit_code=$?
+rm $name
+if [ $exit_code -ne 0 ]; then
+  printf "failed (error code: $?)\n"
+  printf "command: $command\n"
+  printf "output: $response\n\n"
+  echo
+  exit 1
+fi
+printf "okay.\n"
+
+
+
 # convert RESTCONF example into a NETCONF example
 printf "validating ex-api-gbd-with-csr-rpc.json..."
 cat ex-api-gbd-with-csr-rpc.json | sed '1,4d' | sed 's/input/get-bootstrapping-data/' > ex-api-gbd-with-csr-rpc-4nc.json

@@ -15,10 +15,11 @@
 <!--<?rfc strict="no"?> -->
 
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std"
-     ipr="trust200902"
-     docName="draft-ietf-netconf-sztp-csr-latest"
-     updates="8572">
+  category="std"
+  consensus="true"
+  ipr="trust200902"
+  docName="draft-ietf-netconf-sztp-csr-latest"
+  updates="8572">
     <front>
         <title abbrev="Conveying a CSR in an SZTP Request">Conveying a Certificate Signing Request (CSR) in a Secure Zero Touch Provisioning (SZTP) Bootstrapping Request</title>
         <author initials="K." surname="Watsen" fullname="Kent Watsen">
@@ -263,8 +264,8 @@ INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-with-csr-rpc.json)
             </figure>
           </t>
 
-          <t>The SZTP-server responds with "onboarding-information" (conveyed
-            encoded inside the "conveyed-information" node) containing a signed
+          <t>The SZTP-server responds with "onboarding-information" (encoded
+            inside the "conveyed-information" node) containing a signed
             identity certificate for the CSR provided by the SZTP-client:</t>
           <t>
             <figure>
@@ -277,17 +278,18 @@ INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-with-csr-rpc-reply.json)
           <t>How the signed certificate is conveyed inside the onboarding information
             is outside the scope of this document.  Some implementations may choose
             to convey it inside a script (e.g., SZTP's "pre-configuration-script"),
-            while other implementations convey it inside the SZTP "configuration"
-            node.</t>
+            while other implementations may choose to convey it inside the SZTP
+            "configuration" node.  SZTP onboarding information is described in 
+            <relref section="2.2" target="RFC8572"/>.</t>
           <t>Following are two examples of conveying the signed certificate inside
             the "configuration" node.  Both examples assume that the SZTP-client
             understands the "ietf-keystore" module defined in
             <xref target="I-D.ietf-netconf-keystore"/>.</t>
           <t>This first example illustrates the case where the signed certificate is
             for the same asymmetric key used by the SZTP-client's manufacturer-generated
-            identity certificate (e.g., an IDevID).  As such, the configuration needs
-            to associate the newly signed certificate with the existing asymmetric
-            key:</t>
+            identity certificate (e.g., an IDevID, from <xref target="Std-802.1AR-2018"/>).
+            As such, the configuration needs to associate the newly signed certificate
+            with the existing asymmetric key:</t>
           <t>
             <figure>
               <artwork name="ex-keystore-ldevid-same-key.json"><![CDATA[
@@ -309,7 +311,7 @@ INSERT_TEXT_FROM_FILE(refs/ex-keystore-ldevid-new-key.json)
           </t>
           <t>In addition to configuring the signed certificate, it is often
             necessary to also configure the Issuer's signing certificate
-            so that the the device (i.e., STZP-client) can authenticate
+            so that the device (i.e., STZP-client) can authenticate
             certificates presented by peer devices signed by the same
             issuer as its own.  While outside the scope of this document,
             one way to do this would be to use the "ietf-truststore" module
@@ -361,25 +363,15 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
               the scope of this document.</t>
           </section>
           <section title="Reuse of a Manufacturer-generated Private Key">
-            <t>It is RECOMMENDED in <xref target="RFC8572"/> that devices are
-              shipped from manufacturing with a secure device identity certificate
-              (e.g., an IDevID, from <xref target="Std-802.1AR-2018"/>).  It is
-              also RECOMMENDED that the private key for these necessarily long-lived
-                certificates be stored in an HSM, such as a TPM.  Lastly, per the
-
-                FIXME: guy says that the the keys/certs aren't always stored in the TPM
-                (see private email from Aug 13th)
-
-              previous consideration, when devices generate a new private key, it
-              is also RECOMMENDED that the private key is protected by the HSM.</t>
-            <t>However, it is understood that space on an HSM chip may be limited,
-              potentially to the point of not being able to store an additional
-              private key for the CSR described in this document, and that it
-              may not be possible to store hardware-protected keys outside the
-              TPM (e.g., a TPM-encrypted key stored in non-volatile memory).
-              In such cases, it is RECOMMENDED to reuse the existing
-              hardware-protected private key rather than generate a second
-              private key outside of protection afforded by the hardware.</t>
+            <t>It is RECOMMENDED that a new private key is generated for each
+              CSR described in this document.</t>
+            <t>This private key SHOULD be protected as well as the built-in
+              private key associated with the device's initial secure device identity
+              certificate (e.g., the IDevID, from <xref target="Std-802.1AR-2018"/>).</t>
+            <t>In cases where it is not possible to generate a new private key
+              that is protected as well as the built-in private key, it is
+              RECOMMENDED to reuse the built-in private key rather than
+              generate a new private key that is not as well protected.</t>
           </section>
           <section title="Replay Attack Protection">
             <t>This RFC enables an SZTP-client to announce an ability to

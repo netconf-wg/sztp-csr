@@ -5,12 +5,14 @@ module ietf-sztp-csr {
 
   import ietf-sztp-bootstrap-server {
     prefix sztp-svr;
-    reference "RFC 8572: Secure Zero Touch Provisioning (SZTP)";
+    reference
+      "RFC 8572: Secure Zero Touch Provisioning (SZTP)";
   }
 
   import ietf-yang-structure-ext {
     prefix sx;
-    reference "RFC BBBB:YANG Data Structure Extensions";
+    reference
+      "RFC 8791: YANG Data Structure Extensions";
   }
 
   import ietf-crypto-types {
@@ -30,33 +32,33 @@ module ietf-sztp-csr {
                Sean Turner <mailto:sean@sn3rd.com>";
 
   description
-   "This module augments the 'get-bootstrapping-data' RPC,
-    defined in the 'ietf-sztp-bootstrap-server' module from
-    SZTP (RFC 8572), enabling the SZTP-client to obtain a
-    signed identity certificate (e.g., an LDevID from IEEE
-    802.1AR) as part of the SZTP 'onboarding-information'
-    response.
+    "This module augments the 'get-bootstrapping-data' RPC,
+     defined in the 'ietf-sztp-bootstrap-server' module from
+     SZTP (RFC 8572), enabling the SZTP-client to obtain a
+     signed identity certificate (e.g., an LDevID from IEEE
+     802.1AR) as part of the SZTP onboarding information
+     response.
 
-    Copyright (c) 2020 IETF Trust and the persons identified
-    as authors of the code. All rights reserved.
+     Copyright (c) 2020 IETF Trust and the persons identified
+     as authors of the code. All rights reserved.
 
-    Redistribution and use in source and binary forms, with
-    or without modification, is permitted pursuant to, and
-    subject to the license terms contained in, the Simplified
-    BSD License set forth in Section 4.c of the IETF Trust's
-    Legal Provisions Relating to IETF Documents
-    (https://trustee.ietf.org/license-info).
+     Redistribution and use in source and binary forms, with
+     or without modification, is permitted pursuant to, and
+     subject to the license terms contained in, the Simplified
+     BSD License set forth in Section 4.c of the IETF Trust's
+     Legal Provisions Relating to IETF Documents
+     (https://trustee.ietf.org/license-info).
 
-    This version of this YANG module is part of RFC XXXX
-    (https://www.rfc-editor.org/info/rfcXXXX); see the RFC
-    itself for full legal notices.
+     This version of this YANG module is part of RFC XXXX
+     (https://www.rfc-editor.org/info/rfcXXXX); see the RFC
+     itself for full legal notices.
 
-    The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL',
-    'SHALL NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED',
-    'NOT RECOMMENDED', 'MAY', and 'OPTIONAL' in this
-    document are to be interpreted as described in BCP 14
-    (RFC 2119) (RFC 8174) when, and only when, they appear
-    in all capitals, as shown here.";
+     The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL',
+     'SHALL NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED',
+     'NOT RECOMMENDED', 'MAY', and 'OPTIONAL' in this
+     document are to be interpreted as described in BCP 14
+     (RFC 2119) (RFC 8174) when, and only when, they appear
+     in all capitals, as shown here.";
 
   revision YYYY-MM-DD {
     description
@@ -71,13 +73,13 @@ module ietf-sztp-csr {
     description
       "A base identity for the request formats supported
        by the SZTP-client.
-       
+
        Additional derived identities MAY be defined by
        future efforts.";
   }
 
   identity p10 {
-    base "certificate-request-format";
+    base certificate-request-format;
     description
       "Indicates that the SZTP-client supports generating
        requests using the 'CertificationRequest' structure
@@ -88,7 +90,7 @@ module ietf-sztp-csr {
   }
 
   identity cmc {
-    base "certificate-request-format";
+    base certificate-request-format;
     description
       "Indicates that the SZTP-client supports generating
        requests using a constrained version of the 'Full
@@ -98,7 +100,7 @@ module ietf-sztp-csr {
   }
 
   identity cmp {
-    base "certificate-request-format";
+    base certificate-request-format;
     description
       "Indicates that the SZTP-client supports generating
        requests that contain a PKCS#10 Certificate Signing
@@ -112,11 +114,9 @@ module ietf-sztp-csr {
                  Certificate Management Protocol (CMP)";
   }
 
-
   // Protocol-accessible nodes
 
   augment "/sztp-svr:get-bootstrapping-data/sztp-svr:input" {
-
     description
       "This augmentation adds the 'csr-support' and 'csr' nodes to
        the SZTP (RFC 8572) 'get-bootstrapping-data' request message,
@@ -131,19 +131,17 @@ module ietf-sztp-csr {
 
        The 'csr' node enables the SZTP-client to relay a CSR to
        the SZTP-server.";
-
-     reference
-       "IEEE 802.1AR: IEEE Standard for Local and metropolitan
-                      area networks - Secure Device Identity
-        RFC 8572: Secure Zero Touch Provisioning (SZTP)";
-
+    reference
+      "IEEE 802.1AR: IEEE Standard for Local and metropolitan
+                     area networks - Secure Device Identity
+       RFC 8572: Secure Zero Touch Provisioning (SZTP)";
     container csr-support {
       presence
         "Indicates that the SZTP-client is capable of sending CSRs.";
       description
         "The 'csr-support' node enables the SZTP-client to indicate
          that it supports generating certificate signing requests
-         (CSRs), and to provide details around the CSRs it is able
+         (CSRs), and provide details around the CSRs it is able
          to generate.
 
          When present, the SZTP-server MAY respond with the HTTP
@@ -155,7 +153,7 @@ module ietf-sztp-csr {
         presence
           "Indicates that the SZTP-client is capable of
            generating a new asymmetric key pair.
-           
+
            If this node is not present, the SZTP-server MAY
            request a CSR using the asymmetric key associated
            with the device's existing identity certificate
@@ -205,10 +203,8 @@ module ietf-sztp-csr {
         }
       }
     }
-
     container csr {
-      presence
-        "Indicates that the SZTP-client has sent a CSR.";
+      presence "Indicates that the SZTP-client has sent a CSR.";
       description
         "The 'csr' node enables the SZTP-client to convey
          a certificate signing request, using the encoding
@@ -218,7 +214,7 @@ module ietf-sztp-csr {
          'csr-support' node.
 
          When present, the SZTP-server SHOULD respond with
-         an SZTP 'onboarding-information' message containing
+         an SZTP onboarding information message containing
          a signed certificate for the conveyed CSR.  The
          SZTP-server MAY alternatively respond with another
          HTTP error containing another 'request-info', in
@@ -228,7 +224,7 @@ module ietf-sztp-csr {
         mandatory true;
         description
           "A choice amongst certificate signing request formats.
-  
+
            Additional formats MAY be augmented into this 'choice'
            statement by future efforts.";
         case p10 {
@@ -252,7 +248,7 @@ module ietf-sztp-csr {
                message defined in RFC 5272, encoded using ASN.1
                distinguished encoding rules (DER), as specified
                in ITU-T X.690.
-  
+
                For asymmetric key-based origin authentication
                of a CSR based on the IDevID's private key for the
                associated IDevID's public key, the PKIData contains
@@ -262,7 +258,7 @@ module ietf-sztp-csr {
                CHOICE. The tcr is the TaggedCertificationRequest
                and it a bodyPartId and the certificateRequest
                elements. The certificateRequest is signed with
-               the IDevID's private key. 
+               the IDevID's private key.
 
                For asymmetric key-based origin authentication
                based on the IDevID's private key that encapsulates
@@ -279,7 +275,7 @@ module ietf-sztp-csr {
                tcr is the TaggedCertificationRequest and it a
                bodyPartId and the certificateRequest elements.
                The certificateRequest is signed with the LDevID's
-               private key. 
+               private key.
 
                For shared secret-based origin authentication of
                a CSR signed by the LDevID's private key, the
@@ -386,13 +382,16 @@ module ietf-sztp-csr {
          This leaf MUST only appear if the SZTP-clients
          'csr-support' included the 'key-generation' node.";
       description
-        "Specifies details for the key that the SZTP-client
-         is to generate.";
+        "A YANG data structure, per RFC 8791, that specifies
+         details for the key that the SZTP-client is to
+         generate.";
+      reference
+        "RFC 8791: YANG Data Structure Extensions";
       container selected-algorithm {
         description
           "The key algorithm selected by the SZTP-server. The
            algorithm MUST be one of the algorithms specified
-           by the 'supported-algorithms' node in the 
+           by the 'supported-algorithms' node in the
            SZTP-client's request message.";
         leaf algorithm-identifier {
           type binary;
@@ -417,7 +416,7 @@ module ietf-sztp-csr {
         "Specifies details for the CSR that the SZTP-client
          is to generate.";
       container selected-format {
-        description 
+        description
           "The CSR format selected by the SZTP-server. The
            format MUST be one of the formats specified by
            the 'supported-formats' node in the SZTP-client's
@@ -437,17 +436,19 @@ module ietf-sztp-csr {
       type ct:csr-info;
       description
         "A CertificationRequestInfo structure, as defined in
-         RFC 2986.
-        
+         RFC 2986, and modeled via a 'typedef' statement by
+         RFC AAAA.
+
          Enables the SZTP-server to provide a fully-populated
          CertificationRequestInfo structure that the SZTP-client
          only needs to sign in order to generate the complete
          'CertificationRequest' structure to send to SZTP-server
          in its next 'get-bootstrapping-data' request message.
-         
+
          When provided, the SZTP-client SHOULD use this
          structure to generate its CSR; failure to do so MAY
-         result in another 400 (Bad Request) response.
+         result in a 400 (Bad Request) response containing
+         another 'request-info' structure.
 
          When not provided, the SZTP-client SHOULD generate a
          CSR using the same structure defined in its existing
