@@ -36,10 +36,13 @@ idnits: $(next).txt
 	$(idnits) $<
 
 clean:
-	-rm -f $(draft).txt $(draft).html index.html
-	-rm -f $(next).txt $(next).html
 	-rm -f $(draft)-[0-9][0-9].xml
-	-rm -f ietf-*\@202*.yang
+	-rm -f $(draft)-[0-9][0-9].v2v3.xml
+	-rm -f $(draft)-[0-9][0-9].txt
+	-rm -f $(draft)-[0-9][0-9].html
+	-rm -f ietf-*\@20*.yang
+	-rm -f iana-*\@20*.yang
+	-rm -f metadata.min.js
 	-rm -f refs/ietf-*\@202*.yang
 ifeq (md,$(draft_type))
 	-rm -f $(draft).xml
@@ -59,6 +62,7 @@ $(next).xml: $(draft).xml
 	cd refs && ./validate-all.sh && ./gen-trees.sh && cd ..
 	./.insert-figures.sh $@ > tmp && mv tmp $@
 	@rm -f refs/*-tree*.txt
+	xml2rfc --v2v3 $@
 
 .INTERMEDIATE: $(draft).xml
 %.xml: %.md

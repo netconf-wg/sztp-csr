@@ -63,6 +63,7 @@ response=`$command 2>&1`
 exit_code=$?
 rm ex-api-gbd-without-csr-rpc-4nc.json
 rm ex-api-gbd-without-csr-rpc-reply-4nc.json
+rm ietf-restconf\@`date +%Y-%m-%d`.yang
 if [ $exit_code -ne 0 ]; then
   printf "failed (error code: $?)\n"
   printf "$response\n\n"

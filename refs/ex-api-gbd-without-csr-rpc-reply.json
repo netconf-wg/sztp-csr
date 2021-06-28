@@ -1,4 +1,4 @@
-HTTP/1.1 400 Bad Request
+HTTP/1.1 300 Multiple Choices
 Date: Sat, 31 Oct 2015 17:02:40 GMT
 Server: example-server
 Content-Type: application/yang.data+json
@@ -14,7 +14,7 @@ Content-Type: application/yang.data+json
           "ietf-sztp-csr:request-info": {
             "key-generation": {
               "selected-algorithm": {
-                "algorithm-identifier": "base64EncodedValue=="
+                "algorithm-identifier": "BASE64VALUE="
               }
             },
             "csr-generation": {
@@ -22,7 +22,7 @@ Content-Type: application/yang.data+json
                 "format-identifier": "ietf-sztp-csr:cmc"
               }
             },
-            "cert-req-info": "base64EncodedValue=="
+            "cert-req-info": "BASE64VALUE="
           }
         }
       }

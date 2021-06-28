@@ -6,6 +6,6 @@ Content-Type: application/yang.data+json
 {
   "ietf-sztp-bootstrap-server:output" : {
     "reporting-level": "verbose",
-    "conveyed-information": "base64encodedvalue=="
+    "conveyed-information": "BASE64VALUE="
   }
 }

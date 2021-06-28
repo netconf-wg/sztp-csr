@@ -157,6 +157,14 @@
           when, and only when, they appear in all capitals, as shown here.</t>
         </section>
 
+        <section title="Conventions">
+          <t>Various examples used in this document use a placeholder
+            value for binary data that has been base64 encoded (e.g.,
+            "BASE64VALUE=").  This placeholder value is used as real
+            base64 encoded structures are often many lines long and
+            hence distracting to the example being presented.</t>
+        </section>
+
       </section>  <!-- end Introduction -->
 
       <section title='The "ietf-sztp-csr" Module'>
@@ -173,7 +181,7 @@
         <section title="Data Model Overview">
           <t>The following tree diagram <xref target="RFC8340"/> illustrates the 
             "ietf-sztp-csr" module. The diagram shows the definition of an
-            augmentation adding descendent nodes "csr-support" and "csr"
+            augmentation adding descendant nodes "csr-support" and "csr"
             and the definition of a structure called "request-info".</t>
           <t>In the order of their intended use:</t>
           <ul>
@@ -186,7 +194,7 @@
               additionally communicates details about the CSR the SZTP-client is to
               generate.</li>
             <li>The "csr" node is used by the SZTP-client to communicate
-              its CSR to the SZTP-server. Not shown is how the SZTP-server
+              its CSR to the SZTP-server.  Not shown is how the SZTP-server
               communicates the signed certificate to the SZTP-client; how to
               do this is discussed later in this document.</li>
           </ul>
@@ -241,7 +249,7 @@ INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-without-csr-rpc.json)
           </t>
 
           <t>Assuming the SZTP-server wishes to prompt the SZTP-client to
-            provide a CSR, then it would respond with an HTTP 400 (Bad Request)
+            provide a CSR, then it would respond with an HTTP 300 Multiple Choices
             error code:</t>
           <t>
             <figure>
@@ -322,7 +330,7 @@ INSERT_TEXT_FROM_FILE(refs/ex-keystore-ldevid-new-key.json)
         <section title="YANG Module" anchor="yang-module">
           <t>This module augments an RPC defined in <xref target="RFC8572"/>, uses
             a data type defined in <xref target="I-D.ietf-netconf-crypto-types"/>,
-            has an normative references to <xref target="RFC2986"/> and
+            has normative references to <xref target="RFC2986"/> and
             <xref target="ITU.X690.2015"/>, and an informative reference
             to <xref target="Std-802.1AR-2018"/>.</t>
           <t>
@@ -375,19 +383,20 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
           </section>
           <section title="Replay Attack Protection">
             <t>This RFC enables an SZTP-client to announce an ability to
-              generate new key to use for its CSR.</t>
+              generate a new key to use for its CSR.</t>
             <t>When the SZTP-server responds with a request for the device
               to generate a new key, it is essential that the device actually
               generates a new key.</t>
             <t>Generating a new key each time enables the random bytes used
-              to create the key to serve the dual-purpose of also acting like
+              to create the key to also serve the dual-purpose of acting like
               a "nonce" used in other mechanisms to detect replay attacks.</t>
             <t>When a fresh public/private key pair is generated for the
               request, confirmation to the SZTP-client that the response
               has not been replayed is enabled by the SZTP-client's fresh 
               public key appearing in the signed certificate provided by
               the SZTP-server.</t>
-            <t>When a public/private key pair associated with the IDevID
+            <t>When a public/private key pair associated with the 
+              manufacturer-generated identity certificate (e.g., IDevID) is
               used for the request, there may not be confirmation to the
               SZTP-client that the response has not been replayed; however,
               the worst case result is a lost certificate that is associated
@@ -408,7 +417,7 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
               untrusted SZTP-server.</t>
             <t>Consistent with the recommendation presented in 
             <relref section="9.6" target="RFC8572"/>, SZTP-clients
-              SHOULD NOT passed the "csr-support" input parameter
+              SHOULD NOT pass the "csr-support" input parameter
               to an untrusted SZTP-server.  SZTP-clients SHOULD
               pass instead the "signed-data-preferred" input
               parameter, as discussed in <relref section="B"
@@ -418,19 +427,19 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
             <t>When generating a new key, it is important that the client
               be able to provide additional proof to the CA that it was
               the entity that generated the key.</t>
-            <t>All of the certificate request formats defined in this
+            <t>All the certificate request formats defined in this
               document (e.g., CMC, CMP, etc.), not including a raw PKCS#10,
               support origin authentication.</t>
             <t>These formats support origin authentication using both
               PKI and shared secret.</t>
-            <t>Typically only one possible origin authentication
+            <t>Typically, only one possible origin authentication
               mechanism can possibly be used but, in the case that the
               SZTP-client authenticates itself using both TLS-level
               (e.g., IDevID) and HTTP-level credentials (e.g., Basic), 
               as is allowed by <relref section="5.3" target="RFC8572"/>,
               then the SZTP-client may need to choose between the two
               options.</t>
-            <t>In the case the SZTP-client must choose between the
+            <t>In the case that the SZTP-client must choose between the
               asymmetric key option versus a shared secret for origin
               authentication, it is RECOMMENDED that the SZTP-client
               choose using the asymmetric key option.</t>
@@ -447,7 +456,14 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
         </section>
         <section title="SZTP-Server Considerations">
           <section title="Conveying Proof of Possession to a CA">
-            <!--<t>FIXME: Note that RFC 4210 seems most similar! - E.7 and D.4?</t>-->
+            <t>When the bootstrapping device's manufacturer-generated private
+              key (e.g., the IDevID key) is reused, a CA may validate that
+              the CSR was signed by that key.</t>
+            <t>Both the CMP and CMC formats entail the bootstrapping device
+              signing the request once with its (e.g., LDevID) key and then
+              again with its (e.g., IDevID) key, which enables a downstream
+              CA to be assured that the device possesses the public key
+              being signed.</t>
           </section>
           <section title="Supporting SZTP-Clients that don't trust the SZTP-Server">
             <t><xref target="RFC8572"/> allows SZTP-clients to connect
@@ -523,6 +539,7 @@ reference: RFC XXXX
       <references title="Normative References">
         <?rfc include="reference.RFC.2119.xml"?>
         <?rfc include="reference.RFC.2986.xml"?>
+        <?rfc include="reference.RFC.3688.xml"?>
         <?rfc include="reference.RFC.6020.xml"?>
         <?rfc include="reference.RFC.7950.xml"?>
         <?rfc include="reference.RFC.8040.xml"?>
@@ -559,7 +576,6 @@ reference: RFC XXXX
           </front>
         </reference>
 
-        <?rfc include="reference.RFC.3688.xml"?>
         <?rfc include="reference.RFC.8340.xml"?>
         <?rfc include="reference.RFC.8407.xml"?>
         <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netconf-keystore.xml"/>

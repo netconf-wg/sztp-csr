@@ -12,9 +12,9 @@ Content-Type: application/yang.data+json
       "key-generation": {
         "supported-algorithms": {
           "algorithm-identifier": [
-            "base64encodedvalue1=",
-            "base64encodedvalue2=",
-            "base64encodedvalue3="
+            "BASE64VALUE1",
+            "BASE64VALUE2",
+            "BASE64VALUE3"
           ]
         }
       },

@@ -1,0 +1,15 @@
+{
+  "ietf-sztp-csr:request-info": {
+    "key-generation": {
+      "selected-algorithm": {
+        "algorithm-identifier": "BASE64VALUE="
+      }
+    },
+    "csr-generation": {
+      "selected-format": {
+        "format-identifier": "ietf-sztp-csr:cmc"
+      }
+    },
+    "cert-req-info": "BASE64VALUE="
+  }
+}

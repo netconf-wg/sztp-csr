@@ -9,7 +9,7 @@ Content-Type: application/yang.data+json
     "os-version": "17.3R2.1",
     "nonce": "extralongbase64encodedvalue=",
     "ietf-sztp-csr:csr": {
-      "p10": "base64encodedvalue=="
+      "p10": "BASE64VALUE="
     }
   }
 }
