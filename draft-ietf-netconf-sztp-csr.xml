@@ -249,7 +249,7 @@ INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-without-csr-rpc.json)
           </t>
 
           <t>Assuming the SZTP-server wishes to prompt the SZTP-client to
-            provide a CSR, then it would respond with an HTTP 300 Multiple Choices
+            provide a CSR, then it would respond with an HTTP 400 Bad Request
             error code:</t>
           <t>
             <figure>

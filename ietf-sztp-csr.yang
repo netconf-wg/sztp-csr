@@ -149,7 +149,7 @@ module ietf-sztp-csr {
            the CSRs it is able to generate.
   
            When present, the SZTP-server MAY respond with the HTTP
-           code 300 Multiple Choices with an 'ietf-restconf:errors'
+           code 400 Bad Request with an 'ietf-restconf:errors'
            document having the 'error-tag' value 'missing-attribute'
            and the 'error-info' node containing the 'request-info'
            structure described in this module.";
@@ -452,7 +452,7 @@ module ietf-sztp-csr {
 
          When provided, the SZTP-client SHOULD use this
          structure to generate its CSR; failure to do so MAY
-         result in a 300 Multiple Choices response containing
+         result in a 400 Bad Request response containing
          another 'request-info' structure.
 
          When not provided, the SZTP-client SHOULD generate a
