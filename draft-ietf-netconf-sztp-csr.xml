@@ -114,6 +114,12 @@
             certificate (e.g., an LDevID <xref target="Std-802.1AR-2018"/>)
             as part of the "onboarding information" response provided in
             the RPC-reply.</t>
+          <t>The ability to provision an identity certificate that is purpose-built
+            for a production environment during the bootstrapping process
+            removes reliance on the manufacturer CA, and it also enables the
+            bootstraped device to join the production environment with an
+            appropriate identity and other attributes in its LDevID
+            certificate.</t>
         </section>
 
         <section title="Terminology" anchor="terminology">
