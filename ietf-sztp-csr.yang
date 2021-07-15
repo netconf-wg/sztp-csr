@@ -265,10 +265,10 @@ module ietf-sztp-csr {
                  the IDevID's private key.
   
                  For asymmetric key-based origin authentication
-                 based on the IDevID's private key that encapsulates
-                 a CSR signed by the LDevID's private key, the
-                 PKIData contains one cmsSequence element and no
-                 controlSequence, reqSequence, or otherMsgSequence
+                 based on the IDevID's private key that signs the
+                 encapsulated CSR signed by the LDevID's private
+                 key, the PKIData contains one cmsSequence element
+                 and no controlSequence, reqSequence, or otherMsgSequence
                  elements. The cmsSequence is the TaggedContentInfo
                  and it includes a bodyPartID element and a
                  contentInfo. The contentInfo is a SignedData
@@ -327,8 +327,8 @@ module ietf-sztp-csr {
                  p10cr CHOICE.
   
                  For asymmetric key-based origin authentication based
-                 on the IDevID's private key that encapsulates a CSR
-                 signed by the LDevID's private key, PKIMessages
+                 on the IDevID's private key that signs the encapsulated
+                 CSR signed by the LDevID's private key, PKIMessages
                  contains one PKIMessage with one header element,
                  one body element, one protection element, and one
                  extraCerts element.  The header element contains
