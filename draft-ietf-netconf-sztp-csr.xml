@@ -600,13 +600,17 @@ reference: RFC XXXX
       </section>
       -->
 
-      <!--
       <section title="Acknowledgements" numbered="no">
-        <t>The authors would like to thank for following for
-        lively discussions on list and in the halls (ordered
-        by last name):
+        <t>The authors would like to thank for following for lively
+          discussions on list and in the halls (ordered by first name):
+          David von Oheimb,
+          Hendrik Brockhaus,
+          Guy Fedorkow,
+          Joe CLarke,
+          Rich Salz,
+          Rob Wilton,
+          and Qin Wu.
         </t>
       </section>
-      -->
     </back>
 </rfc>
