@@ -326,22 +326,23 @@ module ietf-sztp-csr {
                  or extraCerts elements. The body element contains a
                  p10cr CHOICE.
   
-                 For asymmetric key-based origin authentication based
-                 on the IDevID's private key that signs the encapsulated
-                 CSR signed by the LDevID's private key, PKIMessages
-                 contains one PKIMessage with one header element,
-                 one body element, one protection element, and one
-                 extraCerts element.  The header element contains
-                 pvno, sender, recipient, and protectionAlg elements
-                 and no other elements. The body element contains the
-                 nested CHOICE. The nested element's PKIMessages
-                 contains one PKIMessage with one body element, one
-                 header element that is an empty sequence, and no
-                 protection or extraCerts elements. The nested
-                 element's body element contains a p10cr CHOICE. The
-                 protection element contains the digital signature
-                 generated with the IDevID's private key. The
-                 extraCerts element contains the IDevID certificate.
+                 For asymmetric key-based origin authentication
+                 based on the IDevID's private key that signs the
+                 encapsulated CSR signed by the LDevID's private key,
+                 PKIMessages contains one PKIMessage with one header
+                 element, one body element, one protection element,
+                 and one extraCerts element.  The header element
+                 contains pvno, sender, recipient, and protectionAlg
+                 elements and no other elements. The body element
+                 contains the nested CHOICE. The nested element's
+                 PKIMessages contains one PKIMessage with one body
+                 element, one header element that is an empty
+                 sequence, and no protection or extraCerts elements.
+                 The nested element's body element contains a p10cr
+                 CHOICE. The protection element contains the digital
+                 signature generated with the IDevID's private key.
+                 The extraCerts element contains the IDevID
+                 certificate.
   
                  For shared secret-based origin authentication of a
                  CSR signed by the LDevID's private key, PKIMessages
