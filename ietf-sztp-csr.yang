@@ -258,7 +258,9 @@ module ietf-sztp-csr {
                  tcr is the TaggedCertificationRequest and it a
                  bodyPartId and the certificateRequest elements.
                  The certificateRequest is signed with the IDevID's
-                 private key.
+                 private key. The IDevID certificate and optionally
+                 its certificate chain is included in the SignedData
+                 certificates that encapsulates the PKIData.
   
                  For asymmetric key-based origin authentication
                  based on the IDevID's private key that signs the
@@ -291,7 +293,9 @@ module ietf-sztp-csr {
                  is the TaggedCertificationRequest and it a
                  bodyPartId and the certificateRequest elements.
                  The certificateRequest is signed with the LDevID's
-                 private key.";
+                 private key. The IDevID certificate and optionally
+                 its certificate chain is included in the SignedData
+                 certificates that encapsulates the PKIData.";
               reference
                 "RFC 5272: Certificate Management over CMS (CMC)
                  ITU-T X.690:
