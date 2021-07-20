@@ -252,33 +252,33 @@ module ietf-sztp-csr {
                  message defined in RFC 5272, encoded using ASN.1
                  distinguished encoding rules (DER), as specified
                  in ITU-T X.690.
-  
-                 For asymmetric key-based origin authentication
-                 of a CSR based on the IDevID's private key for the
-                 associated IDevID's public key, the PKIData contains
-                 one reqSequence element and no controlSequence,
-                 cmsSequence, or otherMsgSequence elements. The
-                 reqSequence is the TaggedRequest and it is the tcr
-                 CHOICE. The tcr is the TaggedCertificationRequest
-                 and it a bodyPartId and the certificateRequest
-                 elements. The certificateRequest is signed with
-                 the IDevID's private key.
+ 
+                 For asymmetric key-based origin authentication of
+                 a CSR based on the IDevID's private key for the
+                 associated IDevID's public key, the PKIData
+                 contains one reqSequence element and no cmsSequence
+                 or otherMsgSequence elements. The reqSequence is
+                 the TaggedRequest and it is the tcr CHOICE. The
+                 tcr is the TaggedCertificationRequest and it a
+                 bodyPartId and the certificateRequest elements.
+                 The certificateRequest is signed with the IDevID's
+                 private key.
   
                  For asymmetric key-based origin authentication
                  based on the IDevID's private key that signs the
                  encapsulated CSR signed by the LDevID's private
                  key, the PKIData contains one cmsSequence element
-                 and no controlSequence, reqSequence, or otherMsgSequence
-                 elements. The cmsSequence is the TaggedContentInfo
-                 and it includes a bodyPartID element and a
-                 contentInfo. The contentInfo is a SignedData
-                 encapsulating a PKIData with one reqSequence
-                 element and no controlSequence, cmsSequence, or
-                 otherMsgSequence elements. The reqSequence is
-                 the TaggedRequest and it is the tcr CHOICE. The
-                 tcr is the TaggedCertificationRequest and it a
-                 bodyPartId and the certificateRequest elements.
-                 The certificateRequest is signed with the LDevID's
+                 and no reqSequence or otherMsgSequence elements.
+                 The cmsSequence is the TaggedContentInfo and it
+                 includes a bodyPartID element and a contentInfo.
+                 The contentInfo is a SignedData encapsulating a
+                 PKIData with one reqSequence element and no
+                 controlSequence, cmsSequence, or otherMsgSequence
+                 elements. The reqSequence is the TaggedRequest
+                 and it is the tcr CHOICE. The tcr is the
+                 TaggedCertificationRequest and it a bodyPartId
+                 and the certificateRequest elements.  The
+                 certificateRequest is signed with the LDevID's
                  private key.
   
                  For shared secret-based origin authentication of
