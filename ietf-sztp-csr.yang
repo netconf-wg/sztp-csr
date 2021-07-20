@@ -103,14 +103,10 @@ module ietf-sztp-csr {
     base certificate-request-format;
     description
       "Indicates that the SZTP-client supports generating
-       requests that contain a PKCS#10 Certificate Signing
-       Request (p10cr), as defined in RFC 2986, encapsulated
-       in a Nested Message Content (nested), as defined in
-       RFC 4210.";
+       requests using a constrained version of the PKIMessage
+       containing a p10cr structure defined in RFC 4210.";
     reference
-      "RFC 2986: PKCS #10: Certification Request Syntax
-                 Specification Version 1.7
-       RFC 4210: Internet X.509 Public Key Infrastructure
+      "RFC 4210: Internet X.509 Public Key Infrastructure
                  Certificate Management Protocol (CMP)";
   }
 
@@ -312,57 +308,59 @@ module ietf-sztp-csr {
                 "A PKIMessage structure, as defined in RFC 4210,
                  encoded using ASN.1 distinguished encoding rules
                  (DER), as specified in ITU-T X.690.
-  
-                 The PKIMessage structure contains a PKCS#10
-                 Certificate Signing Request (p10cr), as defined in
-                 RFC 2986, encapsulated in a Nested Message Content
-                 (nested) structure, as defined in RFC 4210.
-  
+
                  For asymmetric key-based origin authentication of
                  a CSR based on the IDevID's private key for the
-                 associated IDevID's public key, PKIMessages contains
-                 one PKIMessage with one body element, a header
-                 element that is an empty sequence, and no protection
-                 or extraCerts elements. The body element contains a
-                 p10cr CHOICE.
-  
+                 associated IDevID's public key, PKIMessages
+                 contains one PKIMessage with the header and body
+                 elements, no protection element, and should contain
+                 the extraCerts element. The header element contains
+                 the pvno, sender, and recipient elements. The pvno
+                 contains cmp2000, and the sender contains the
+                 subject of the IDevID certificate. The body element
+                 contains a p10cr CHOICE of type CertificationRequet.
+                 It is signed with the IDevID's private key. The
+                 extraCerts element contains the IDevID certificate,
+                 optionally followed by its certificate chain
+                 excluding the trust anchor.
+
                  For asymmetric key-based origin authentication
                  based on the IDevID's private key that signs the
-                 encapsulated CSR signed by the LDevID's private key,
-                 PKIMessages contains one PKIMessage with one header
-                 element, one body element, one protection element,
-                 and one extraCerts element.  The header element
-                 contains pvno, sender, recipient, and protectionAlg
-                 elements and no other elements. The body element
-                 contains the nested CHOICE. The nested element's
-                 PKIMessages contains one PKIMessage with one body
-                 element, one header element that is an empty
-                 sequence, and no protection or extraCerts elements.
-                 The nested element's body element contains a p10cr
-                 CHOICE. The protection element contains the digital
-                 signature generated with the IDevID's private key.
-                 The extraCerts element contains the IDevID
-                 certificate.
-  
+                 encapsulated CSR signed by the LDevID's private
+                 key, PKIMessages contains one PKIMessage with the
+                 header, body, and protection elements, and should
+                 contain the extraCerts element. The header element
+                 contains the pvno, sender, recipient, protectionAlg,
+                 and optionally senderKID elements. The pvno contains
+                 cmp2000, the sender contains the subject of the
+                 IDevID certificate, the protectionAlg contains the
+                 AlgorithmIdentifier of the used signature algorithm,
+                 and the senderKID contains the subject key
+                 identifier of the IDevID certificate. The body
+                 element contains a p10cr CHOICE of type
+                 CertificationRequet. It is signed with the LDevID's
+                 private key.  The protection element contains the
+                 digital signature generated with the IDevID's
+                 private key. The extraCerts element contains the
+                 IDevID certificate, optionally followed by its
+                 certificate chain excluding the trust anchor.
+
                  For shared secret-based origin authentication of a
                  CSR signed by the LDevID's private key, PKIMessages
-                 contains one PKIMessage with one header element,
-                 one body element, one protection element, and no
-                 extraCerts element. The header element contains
-                 pvno, sender, recipient, and protectionAlg elements
-                 and no other elements. The body element contains
-                 the nested CHOICE. The nested element's PKIMessages
-                 contains one PKIMessage with one body element, one
-                 header element that is an empty sequence, and no
-                 protection or extraCerts elements. The body element
-                 contains a p10cr CHOICE. The protection element
-                 contains the MAC value generated with the shared
-                 secret.";
+                 contains one PKIMessage with the header, body, and
+                 protection element, and no extraCerts element. The
+                 header element contains the pvno, sender, recipient,
+                 protectionAlg, and senderKID elements. The pvno
+                 contains cmp2000, the protectionAlg contains the
+                 AlgorithmIdentifier of the used MAC algorithm, and
+                 the senderKID contains a reference the recipient
+                 can use to identify the shared secret. The body
+                 element contains a p10cr CHOICE of type
+                 CertificationRequet. It is signed with the LDevID's
+                 private key.  The protection element contains the
+                 MAC value generated with the shared secret.";
               reference
-                "RFC 2986:
-                   PKCS #10: Certification Request Syntax
-                   Specification Version 1.7
-                 RFC 4210:
+                "RFC 4210:
                    Internet X.509 Public Key Infrastructure
                    Certificate Management Protocol (CMP)
                  ITU-T X.690:

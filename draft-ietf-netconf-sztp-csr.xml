@@ -334,9 +334,11 @@ INSERT_TEXT_FROM_FILE(refs/ex-keystore-ldevid-new-key.json)
         </section>  <!-- Example Usage -->
 
         <section title="YANG Module" anchor="yang-module">
-          <t>This module augments an RPC defined in <xref target="RFC8572"/>, uses
-            a data type defined in <xref target="I-D.ietf-netconf-crypto-types"/>,
-            has normative references to <xref target="RFC2986"/> and
+          <t>This module augments an RPC defined in <xref target="RFC8572"/>. The
+            module uses a data types and groupings defined in <xref target="RFC8572"/>,
+            <xref target="RFC8791"/>, and <xref target="I-D.ietf-netconf-crypto-types"/>.
+            The module has additional normative references to <xref target="RFC2986"/>,
+            <xref target="RFC5272"/>, <xref target="RFC4210"/>, and
             <xref target="ITU.X690.2015"/>, and an informative reference
             to <xref target="Std-802.1AR-2018"/>.</t>
           <t>
@@ -553,6 +555,7 @@ reference: RFC XXXX
         <?rfc include="reference.RFC.8040.xml"?>
         <?rfc include="reference.RFC.8174.xml"?>
         <?rfc include="reference.RFC.8572.xml"?>
+        <?rfc include="reference.RFC.8791.xml"?>
         <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netconf-crypto-types.xml"/>
 
         <!-- THE FOLLOWING LINE DOESN'T RESOLVE FOR SOME REASON:
