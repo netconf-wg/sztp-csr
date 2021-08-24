@@ -21,7 +21,7 @@ run_unix_cmd() {
 
 echo "validating ietf-sztp-csr.yang..."
 printf "  ^ with pyang..."
-response=`pyang --ietf -Werror --strict --canonical --max-line-length=69 ../ietf-sztp-csr\@*.yang 2>&1`
+response=`pyang -p ../ --ietf -Werror --strict --canonical --max-line-length=69 ../ietf-sztp-csr\@*.yang 2>&1`
 if [ $? -ne 0 ]; then
   printf "failed (error code: $?)\n"
   printf "$response\n\n"
@@ -30,7 +30,7 @@ if [ $? -ne 0 ]; then
 fi
 printf "okay.\n"
 printf "  ^ with yanglint..."
-response=`yanglint ../ietf-sztp-csr\@*.yang 2>&1`
+response=`yanglint -p ../ ../ietf-ztp-types\@*.yang ../ietf-sztp-csr\@*.yang 2>&1`
 if [ $? -ne 0 ]; then
   printf "failed (error code: $?)\n"
   printf "$response\n\n"
@@ -43,7 +43,7 @@ printf "okay.\n\n"
 # convert RESTCONF example into a NETCONF example
 printf "validating ex-api-gbd-without-csr-rpc.json..."
 cat ex-api-gbd-without-csr-rpc.json | sed '1,4d' | sed 's/input/get-bootstrapping-data/' > ex-api-gbd-without-csr-rpc-4nc.json
-command="yanglint -s -t rpc ietf-sztp-bootstrap-server\@*.yang ../ietf-sztp-csr\@*.yang ex-api-gbd-without-csr-rpc-4nc.json"
+command="yanglint -s -t rpc -p ../ ietf-sztp-bootstrap-server\@*.yang ../ietf-ztp-types\@*.yang ../ietf-sztp-csr\@*.yang ex-api-gbd-without-csr-rpc-4nc.json"
 response=`$command 2>&1`
 if [ $? -ne 0 ]; then
   printf "failed (error code: $?)\n"
@@ -58,7 +58,7 @@ printf "okay.\n"
 printf "validating ex-api-gbd-without-csr-rpc-reply.json..."
 sed -e 's/^}/uses errors { refine errors { config false; }}}/' -e "s/2017-01-26/`date +%Y-%m-%d`/" ietf-restconf\@2017-01-26.yang > ietf-restconf\@`date +%Y-%m-%d`.yang
 cat ex-api-gbd-without-csr-rpc-reply.json | sed '1,5d' > ex-api-gbd-without-csr-rpc-reply-4nc.json
-command="yanglint -s ietf-restconf@`date +%Y-%m-%d`.yang ../ietf-sztp-csr\@*.yang ex-api-gbd-without-csr-rpc-reply-4nc.json"
+command="yanglint -s -p ../ ietf-restconf@`date +%Y-%m-%d`.yang ../ietf-ztp-types\@*.yang ../ietf-sztp-csr\@*.yang ex-api-gbd-without-csr-rpc-reply-4nc.json"
 response=`$command 2>&1`
 exit_code=$?
 rm ex-api-gbd-without-csr-rpc-4nc.json
@@ -75,7 +75,7 @@ printf "okay.\n"
 printf "validating ex-api-gbd-without-csr-rpc-reply.json's inner payload..."
 name=`ls -1 ../ietf-sztp-csr\@*.yang | sed -e 's/\.\.\///'`
 sed -e 's/sx:structure/container/' ../ietf-sztp-csr\@*.yang > $name 
-command="yanglint -s $name ex-api-gbd-without-csr-rpc-reply-inner-payload.json"
+command="yanglint -s -p ../ ../ietf-ztp-types\@*.yang $name ex-api-gbd-without-csr-rpc-reply-inner-payload.json"
 response=`$command 2>&1`
 exit_code=$?
 rm $name
@@ -93,7 +93,7 @@ printf "okay.\n"
 # convert RESTCONF example into a NETCONF example
 printf "validating ex-api-gbd-with-csr-rpc.json..."
 cat ex-api-gbd-with-csr-rpc.json | sed '1,4d' | sed 's/input/get-bootstrapping-data/' > ex-api-gbd-with-csr-rpc-4nc.json
-response=`yanglint -s -t rpc ietf-sztp-bootstrap-server\@*.yang ../ietf-sztp-csr\@*.yang ex-api-gbd-with-csr-rpc-4nc.json 2>&1`
+response=`yanglint -s -t rpc -p ../ ietf-sztp-bootstrap-server\@*.yang ../ietf-ztp-types\@*.yang ../ietf-sztp-csr\@*.yang ex-api-gbd-with-csr-rpc-4nc.json 2>&1`
 if [ $? -ne 0 ]; then
   printf "failed (error code: $?)\n"
   printf "$response\n\n"
@@ -105,7 +105,7 @@ printf "okay.\n"
 
 printf "validating ex-api-gbd-with-csr-rpc-reply.json..."
 cat ex-api-gbd-with-csr-rpc-reply.json | sed '1,5d' | grep -v "output" | sed '/^  }/d' > ex-api-gbd-with-csr-rpc-reply-4nc.json
-response=`yanglint -s -t rpcreply ietf-sztp-bootstrap-server\@*.yang ../ietf-sztp-csr\@*.yang ex-api-gbd-with-csr-rpc-reply-4nc.json ex-api-gbd-with-csr-rpc-4nc.json 2>&1`
+response=`yanglint -s -t rpcreply -p ../ ietf-sztp-bootstrap-server\@*.yang ../ietf-ztp-types\@*.yang ../ietf-sztp-csr\@*.yang ex-api-gbd-with-csr-rpc-reply-4nc.json ex-api-gbd-with-csr-rpc-4nc.json 2>&1`
 exit_code=$?
 rm ex-api-gbd-with-csr-rpc-4nc.json
 rm ex-api-gbd-with-csr-rpc-reply-4nc.json
@@ -118,12 +118,12 @@ fi
 printf "okay.\n"
 
 printf "Testing refs/ex-keystore-ldevid-same-key.json..."
-command="yanglint -s ietf-keystore\@*.yang ietf-crypto-types\@*.yang ex-keystore-ldevid-same-key.json"
+command="yanglint -s -p ../ ietf-keystore\@*.yang ietf-crypto-types\@*.yang ex-keystore-ldevid-same-key.json"
 run_unix_cmd $LINENO "$command" 0
 printf "okay.\n"
 
 printf "Testing refs/ex-keystore-ldevid-new-key.json..."
-command="yanglint -s ietf-keystore\@*.yang ietf-crypto-types\@*.yang ex-keystore-ldevid-new-key.json"
+command="yanglint -s -p ../ ietf-keystore\@*.yang ietf-crypto-types\@*.yang ex-keystore-ldevid-new-key.json"
 run_unix_cmd $LINENO "$command" 0
 printf "okay.\n"
 

@@ -120,6 +120,12 @@
             bootstraped device to join the production environment with an
             appropriate identity and other attributes in its LDevID
             certificate.</t>
+           <t>Two YANG <xref target="RFC7950"/> modules are defined.  The
+             "ietf-ztp-types" module defines three YANG groupings for the
+             various messages defined in this document.  The "ietf-sztp-csr"
+             module augments two groupings into the "get-bootstrapping-data"
+             RPC and defines a YANG Data Structure <xref target="RFC8791"/>
+               around the third grouping.</t>
         </section>
 
         <section title="Terminology" anchor="terminology">
@@ -175,35 +181,14 @@
 
       <section title='The "ietf-sztp-csr" Module'>
 
-        <t>This section defines a YANG 1.1 <xref target="RFC7950"/> module
-          that augments the "ietf-sztp-bootstrap-server" module defined in
-          <xref target="RFC8572"/> and defines a YANG "structure".</t>
-        <t>The augmentation adds two nodes ("csr-support" and "csr") to
-          the "input" parameter of the "get-bootstrapping-data" RPC
-          defined in <xref target="RFC8572"/>.</t>
-        <t>The YANG structure, "request-info", defines data returned in the
-          "error-info" node defined in <relref section="7.1" target="RFC8040"/>.</t>
+        <t>The "ietf-sztp-csr" module is a YANG 1.1 <xref target="RFC7950"/>
+          module that augments the "ietf-sztp-bootstrap-server" module defined in
+          <xref target="RFC8572"/> and defines a YANG "structure" that is to be
+          conveyed in the "error-info" node defined in <relref section="7.1" target="RFC8040"/>.</t>
 
         <section title="Data Model Overview">
           <t>The following tree diagram <xref target="RFC8340"/> illustrates the 
-            "ietf-sztp-csr" module. The diagram shows the definition of an
-            augmentation adding descendant nodes "csr-support" and "csr"
-            and the definition of a structure called "request-info".</t>
-          <t>In the order of their intended use:</t>
-          <ul>
-            <li>The "csr-support" node is used by the SZTP-client to signal
-              to the SZTP-server that it supports the ability the generate CSRs,
-              per this specification.  The "csr-support" parameter carries
-              details regarding the SZTP-client's ability to generate CSRs.</li>
-            <li>The "request-info" structure is used by the SZTP-server to signal back to
-              the SZTP-client its desire to sign a CSR.  The "request-info" structure
-              additionally communicates details about the CSR the SZTP-client is to
-              generate.</li>
-            <li>The "csr" node is used by the SZTP-client to communicate
-              its CSR to the SZTP-server.  Not shown is how the SZTP-server
-              communicates the signed certificate to the SZTP-client; how to
-              do this is discussed later in this document.</li>
-          </ul>
+            "ietf-sztp-csr" module.</t>
           <t>
             <figure>
               <artwork name="ietf-sztp-csr-tree.txt"><![CDATA[
@@ -211,6 +196,32 @@ INSERT_TEXT_FROM_FILE(refs/ietf-sztp-csr-tree.txt)
 ]]></artwork>
             </figure>
           </t>
+          <t>The augmentation defines two kinds of 
+            parameters that an SZTP-client can send to an SZTP-server.  The
+            YANG structure defines one collection of parameters that an
+            SZTP-server can send to an SZTP-client.</t>
+          <t>In the order of their intended use:</t>
+          <ul>
+            <li>The "csr-support" node is used by the SZTP-client to signal
+              to the SZTP-server that it supports the ability the generate CSRs.
+              This parameter conveys if the SZTP-client is able to generate an
+              new asymmetric key and, if so, which key algorithms it supports, 
+              as well as conveys what kinds of CSR structures the SZTP-client
+              is able to generate.</li>
+            <li>The "csr-request" structure is used by the SZTP-server to request
+              the SZTP-client to generate a CSR.  This structure is used to
+              select the key algorithm the SZTP-client should use to generate
+              a new asymmetric key, if supported, the kind of CSR structure
+              the SZTP-client should generate and, optionally, the content for
+              the CSR itself.</li>
+            <li>The various "csr" nodes are used by the SZTP-client to communicate
+              a CSR to the SZTP-server.</li>
+          </ul>
+          <aside>
+            <t>No data model is defined enabling an SZTP-server to communicate
+              the signed certificate to the SZTP-client.  How to do this is
+              discussed in <xref target="example-usage"/>.</t>
+          </aside>
           <t>To further illustrate how the augmentation and structure defined
             by the "ietf-sztp-csr" module are used, below are two additional
             tree diagrams showing these nodes placed where they are used.</t>
@@ -224,7 +235,7 @@ INSERT_TEXT_FROM_FILE(refs/ietf-sztp-api-n-csr-tree.txt)
             </figure>
           </t>
           <t>The following tree diagram <xref target="RFC8340"/> illustrates RESTCONF's
-            "errors" RPC-reply message with the "request-info" structure in place.</t>
+            "errors" RPC-reply message with the "csr-request" structure in place.</t>
           <t>
             <figure>
               <artwork name="ietf-sztp-csr-errors-n-struct-tree.txt"><![CDATA[
@@ -234,7 +245,7 @@ INSERT_TEXT_FROM_FILE(refs/ietf-sztp-csr-errors-n-struct-tree.txt)
           </t>
         </section>
 
-        <section title="Example Usage">
+        <section title="Example Usage" anchor="example-usage">
 
           <aside>
             <t>The examples below are encoded using JSON, but they could
@@ -268,7 +279,8 @@ INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-without-csr-rpc-reply.json)
 
           <t>Upon being prompted to provide a CSR, the SZTP-client would
             POST another "get-bootstrapping-data" request, but this time
-            including the "csr" node to convey its CSR to the SZTP-server:</t>
+            including one of the "csr" nodes to convey its CSR to the
+            SZTP-server:</t>
           <t>
             <figure>
               <preamble>REQUEST</preamble>
@@ -277,10 +289,15 @@ INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-with-csr-rpc.json)
 ]]></artwork>
             </figure>
           </t>
-
+          <t>At this point, it is expected that the SZTP-server, perhaps
+            in conjunction with other systems, such as a backend CA or RA,
+            will validate the CSR's origin and proof-of-possession and,
+            assuming the CSR is approved, issue a signed certificate for
+            the bootstrapping device.</t>
           <t>The SZTP-server responds with "onboarding-information" (encoded
-            inside the "conveyed-information" node) containing a signed
-            identity certificate for the CSR provided by the SZTP-client:</t>
+            inside the "conveyed-information" node, shown below) containing
+            a signed identity certificate for the CSR provided by the
+            SZTP-client:</t>
           <t>
             <figure>
               <preamble>RESPONSE</preamble>
@@ -333,7 +350,7 @@ INSERT_TEXT_FROM_FILE(refs/ex-keystore-ldevid-new-key.json)
 
         </section>  <!-- Example Usage -->
 
-        <section title="YANG Module" anchor="yang-module">
+        <section title="YANG Module">
           <t>This module augments an RPC defined in <xref target="RFC8572"/>. The
             module uses a data types and groupings defined in <xref target="RFC8572"/>,
             <xref target="RFC8791"/>, and <xref target="I-D.ietf-netconf-crypto-types"/>.
@@ -346,6 +363,46 @@ INSERT_TEXT_FROM_FILE(refs/ex-keystore-ldevid-new-key.json)
               <preamble>&lt;CODE BEGINS&gt; file "ietf-sztp-csr@YYYY-MM-DD.yang"</preamble>
               <artwork name="ietf-sztp-csr@YYYY-MM-DD.yang"><![CDATA[
 INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
+]]></artwork>
+              <postamble>&lt;CODE ENDS&gt;</postamble>
+            </figure>
+          </t>
+        </section> <!-- YANG Module -->
+      </section>
+
+      <section title='The "ietf-ztp-types" Module'>
+
+        <t>This section defines a YANG 1.1 <xref target="RFC7950"/> module
+          that defines three YANG groupings, one each for messages sent
+          between a ZTP-client and ZTP-server.  This module is defines
+          independently of the "ietf-sztp-csr" module so that it's 
+          groupings may be used by bootstrapping protocols other than
+          SZTP <xref target="RFC8572"/>.</t>
+
+        <section title="Data Model Overview">
+          <t>The following tree diagram <xref target="RFC8340"/> illustrates
+            the three groupings defined in the "ietf-ztp-types" module.</t>
+          <t>
+            <figure>
+              <artwork name="ietf-ztp-types-tree.txt"><![CDATA[
+INSERT_TEXT_FROM_FILE(refs/ietf-ztp-types-tree.txt)
+]]></artwork>
+            </figure>
+          </t>
+        </section>
+
+        <section title="YANG Module">
+          <t>This module uses a data types and groupings <xref target="RFC8791"/>
+            and <xref target="I-D.ietf-netconf-crypto-types"/>.  The module has
+            additional normative references to <xref target="RFC2986"/>,
+            <xref target="RFC4210"/>, <xref target="RFC5272"/>, and
+            <xref target="ITU.X690.2015"/>, and an informative reference
+            to <xref target="Std-802.1AR-2018"/>.</t>
+          <t>
+            <figure>
+              <preamble>&lt;CODE BEGINS&gt; file "ietf-ztp-types@YYYY-MM-DD.yang"</preamble>
+              <artwork name="ietf-ztp-types@YYYY-MM-DD.yang"><![CDATA[
+INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
 ]]></artwork>
               <postamble>&lt;CODE ENDS&gt;</postamble>
             </figure>
@@ -371,7 +428,7 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
               the security perimeter of the HSM.  In such cases, the private
               key, and its associated certificates, MAY have long validity
               periods.</t>
-            <t>In cases where the device does not possess an HSM, or otherwise
+            <t>In cases where the SZTP-client does not possess an HSM, or otherwise
               is unable to use an HSM for the private key, it is RECOMMENDED
               to regenerate the private key (and associated identity
               certificates) periodically.  Details for how to generate a new
@@ -382,7 +439,7 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
             <t>It is RECOMMENDED that a new private key is generated for each
               CSR described in this document.</t>
             <t>This private key SHOULD be protected as well as the built-in
-              private key associated with the device's initial secure device identity
+              private key associated with the SZTP-client's initial device identity
               certificate (e.g., the IDevID, from <xref target="Std-802.1AR-2018"/>).</t>
             <t>In cases where it is not possible to generate a new private key
               that is protected as well as the built-in private key, it is
@@ -392,8 +449,8 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
           <section title="Replay Attack Protection">
             <t>This RFC enables an SZTP-client to announce an ability to
               generate a new key to use for its CSR.</t>
-            <t>When the SZTP-server responds with a request for the device
-              to generate a new key, it is essential that the device actually
+            <t>When the SZTP-server responds with a request for the SZTP-client
+              to generate a new key, it is essential that the SZTP-client actually
               generates a new key.</t>
             <t>Generating a new key each time enables the random bytes used
               to create the key to also serve the dual-purpose of acting like
@@ -432,14 +489,16 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
               target="RFC8572"/>.</t>
           </section>
           <section title="Selecting the Best Origin Authentication Mechanism">
-            <t>When generating a new key, it is important that the client
-              be able to provide additional proof to the CA that it was
-              the entity that generated the key.</t>
-            <t>All the certificate request formats defined in this
-              document (e.g., CMC, CMP, etc.), not including a raw PKCS#10,
-              support origin authentication.</t>
-            <t>These formats support origin authentication using both
-              PKI and shared secret.</t>
+            <t>A The CSR's origin SHOULD be verified before a
+              certificate is issued.</t>
+            <t>When generating a new key, it is important that the
+              SZTP-client be able to provide additional proof that it
+              was the entity that generated the key.</t>
+            <t>The CMP and CMC certificate request formats defined in this
+              document support origin authentication.  A raw 
+              PKCS#10 does not support origin authentication.</t>
+            <t>The CMP and CMC request formats support origin
+              authentication using both PKI and shared secret.</t>
             <t>Typically, only one possible origin authentication
               mechanism can possibly be used but, in the case that the
               SZTP-client authenticates itself using both TLS-level
@@ -447,31 +506,30 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
               as is allowed by <relref section="5.3" target="RFC8572"/>,
               then the SZTP-client may need to choose between the two
               options.</t>
-            <t>In the case that the SZTP-client must choose between the
+            <t>In the case that the SZTP-client must choose between an
               asymmetric key option versus a shared secret for origin
               authentication, it is RECOMMENDED that the SZTP-client
-              choose using the asymmetric key option.</t>
+              choose using the asymmetric key.</t>
           </section>
           <section title="Clearing the Private Key and Associated Certificate">
             <t>Unlike a manufacturer-generated identity certificate (e.g., IDevID),
               the deployment-generated identity certificate (e.g., LDevID) and
               the associated private key (assuming a new private key was generated
               for the purpose), are considered user data and SHOULD be cleared
-              whenever the device is reset to its factory default state,
+              whenever the SZTP-client is reset to its factory default state,
               such as by the "factory-reset" RPC defined in
               <xref target="I-D.ietf-netmod-factory-default"/>.</t>
           </section>
         </section>
         <section title="SZTP-Server Considerations">
-          <section title="Conveying Proof of Possession to a CA">
+          <section title="Verifying Proof of Possession">
             <t>When the bootstrapping device's manufacturer-generated private
-              key (e.g., the IDevID key) is reused, a CA may validate that
-              the CSR was signed by that key.</t>
-            <t>Both the CMP and CMC formats entail the bootstrapping device
-              signing the request once with its (e.g., LDevID) key and then
-              again with its (e.g., IDevID) key, which enables a downstream
-              CA to be assured that the device possesses the public key
-              being signed.</t>
+              key (e.g., the IDevID key) is reused for the CSR, proof-of-possession
+              is verified by ensuring the CSR was signed by that key.</t>
+            <t>When a new asymmetric key is used, proof-of-possession may be
+              verified, with the CMP or CMC formats, by ensuring the parent
+              ASN.1 structure containing the CSR is signed by the
+              manufacturer-generated key.</t>
           </section>
           <section title="Supporting SZTP-Clients that don't trust the SZTP-Server">
             <t><xref target="RFC8572"/> allows SZTP-clients to connect
@@ -485,37 +543,50 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
               SHOULD support the "signed-data-preferred" input parameter,
               as discussed in <relref section="B" target="RFC8572"/>.</t>
           </section>
-          <section title='YANG Module Considerations'>
-            <t>The recommended format for documenting the Security
-              Considerations for YANG modules is described in <relref
-              section="3.7" target="RFC8407"/>.  However, the module
-              defined in this document only augments two input parameters
-              into the "get-bootstrapping-data" RPC in <xref
-              target="RFC8572"/>, and therefore only needs to point
-              to the relevant Security Considerations sections in
-              that RFC.</t>
-            <list style="symbols">
-              <t>Security considerations for the "get-bootstrapping-data" RPC
-                are described in <relref section="9.16" target="RFC8572"/>.</t>
-              <t>Security considerations for the "input" parameters passed inside the
-                "get-bootstrapping-data" RPC are described in <relref section="9.6"
-                  target="RFC8572"/>.</t>
-            </list>
-          </section>
         </section>
+        <section title='Security Considerations for the "ietf-sztp-csr" YANG Module'>
+          <t>The recommended format for documenting the Security
+            Considerations for YANG modules is described in <relref
+            section="3.7" target="RFC8407"/>.  However, this module
+            only augments two input parameters
+            into the "get-bootstrapping-data" RPC in <xref
+            target="RFC8572"/>, and therefore only needs to point
+            to the relevant Security Considerations sections in
+            that RFC.</t>
+          <list style="symbols">
+            <t>Security considerations for the "get-bootstrapping-data" RPC
+              are described in <relref section="9.16" target="RFC8572"/>.</t>
+            <t>Security considerations for the "input" parameters passed inside the
+              "get-bootstrapping-data" RPC are described in <relref section="9.6"
+                target="RFC8572"/>.</t>
+          </list>
+        </section>
+        <section title='Security Considerations for the "ietf-ztp-types" YANG Module'>
+          <t>The recommended format for documenting the Security
+            Considerations for YANG modules is described in <relref
+            section="3.7" target="RFC8407"/>.  However, this module
+            does not define any protocol-accessible nodes (it only
+            defines "identity" and "grouping" statements) and therefore
+            there are no Security considerations to report.</t>
+        </section>
+
       </section>  <!-- end Security Considerations -->
 
       <section title="IANA Considerations" anchor="iana-considerations">
         <section title='The "IETF XML" Registry'>
-          <t>This document registers one URI in the "ns" subregistry of
+          <t>This document registers two URIs in the "ns" subregistry of
             the IETF XML Registry <xref target="RFC3688"/> maintained at 
             <eref target="https://www.iana.org/assignments/xml-registry/xml-registry.xhtml#ns"/>.  
             Following the format in <xref target="RFC3688"/>, the following
-            registration is requested:</t>
+            registrations are requested:</t>
           <t>
             <figure>
                 <artwork><![CDATA[
 URI: urn:ietf:params:xml:ns:yang:ietf-sztp-csr
+Registrant Contact: The NETCONF WG of the IETF.
+XML: N/A, the requested URI is an XML namespace.
+
+URI: urn:ietf:params:xml:ns:yang:ietf-ztp-types
 Registrant Contact: The NETCONF WG of the IETF.
 XML: N/A, the requested URI is an XML namespace.
 ]]></artwork>
@@ -523,17 +594,22 @@ XML: N/A, the requested URI is an XML namespace.
           </t>
         </section>
         <section title='The "YANG Module Names" Registry'>
-          <t>This document registers one YANG module in the YANG Module
+          <t>This document registers two YANG modules in the YANG Module
             Names registry <xref target="RFC6020"/> maintained at
             <eref target="https://www.iana.org/assignments/yang-parameters/yang-parameters.xhtml"/>.
             Following the format defined in <xref target="RFC6020"/>, the below
-            registration is requested:</t>
+            registrations are requested:</t>
           <t>
             <figure>
                 <artwork><![CDATA[
 name:      ietf-sztp-csr
 namespace: urn:ietf:params:xml:ns:yang:ietf-sztp-csr
 prefix:    sztp-csr
+reference: RFC XXXX
+                  
+name:      ietf-ztp-types
+namespace: urn:ietf:params:xml:ns:yang:ietf-ztp-types
+prefix:    ztp-types
 reference: RFC XXXX
 ]]></artwork>
             </figure>
@@ -548,8 +624,8 @@ reference: RFC XXXX
         <?rfc include="reference.RFC.2119.xml"?>
         <?rfc include="reference.RFC.2986.xml"?>
         <?rfc include="reference.RFC.3688.xml"?>
-        <?rfc include="reference.RFC.4210.xml"?> <!-- FIXME: need text to reference -->
-        <?rfc include="reference.RFC.5272.xml"?> <!-- FIXME: need text to reference -->
+        <?rfc include="reference.RFC.4210.xml"?>
+        <?rfc include="reference.RFC.5272.xml"?>
         <?rfc include="reference.RFC.6020.xml"?>
         <?rfc include="reference.RFC.7950.xml"?>
         <?rfc include="reference.RFC.8040.xml"?>
@@ -594,17 +670,6 @@ reference: RFC XXXX
         <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netmod-factory-default.xml"/>
       </references>
 
-      <!--
-      <section title="Change Log">
-        <section title="00 to 01">
-          <t>
-            <list style="symbols">
-            </list>
-            </t>
-        </section>
-      </section>
-      -->
-
       <section title="Acknowledgements" numbered="no">
         <t>The authors would like to thank for following for lively
           discussions on list and in the halls (ordered by first name):
@@ -616,6 +681,11 @@ reference: RFC XXXX
           Rob Wilton,
           and Qin Wu.
         </t>
+      </section>
+      <section title="Contributors" numbered="no">
+        <t>Special thanks goes to David von Oheimb and Hendrik Brockhaus
+          for helping with the descriptions for the "cmc-csr" and "cmp-csr"
+          nodes.</t>
       </section>
     </back>
 </rfc>

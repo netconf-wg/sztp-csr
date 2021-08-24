@@ -55,6 +55,7 @@ endif
 $(next).xml: $(draft).xml
 	sed -e"s/$(basename $<)-latest/$(basename $@)/" -e"s/YYYY-MM-DD/$(shell date +%Y-%m-%d)/" $< > $@
 	sed -e"s/YYYY-MM-DD/$(shell date +%Y-%m-%d)/" ietf-sztp-csr.yang > ietf-sztp-csr\@$(shell date +%Y-%m-%d).yang
+	sed -e"s/YYYY-MM-DD/$(shell date +%Y-%m-%d)/" ietf-ztp-types.yang > ietf-ztp-types\@$(shell date +%Y-%m-%d).yang
 	sed -e"s/2019-03-07/$(shell date +%Y-%m-%d)/" ../../netmod-wg/yang-data-ext/ietf-yang-structure-ext.yang > refs/ietf-yang-structure-ext\@$(shell date +%Y-%m-%d).yang
 	sed -e"s/YYYY-MM-DD/$(shell date +%Y-%m-%d)/" ../zero-touch/ietf-sztp-bootstrap-server.yang > refs/ietf-sztp-bootstrap-server\@$(shell date +%Y-%m-%d).yang
 	sed -e"s/YYYY-MM-DD/$(shell date +%Y-%m-%d)/" ../crypto-types/ietf-crypto-types.yang > refs/ietf-crypto-types\@$(shell date +%Y-%m-%d).yang

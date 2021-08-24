@@ -21,9 +21,9 @@ Content-Type: application/yang.data+json
       "csr-generation": {
         "supported-formats": {
           "format-identifier": [
-            "ietf-sztp-csr:p10",
-            "ietf-sztp-csr:cmc",
-            "ietf-sztp-csr:cmp"
+            "ietf-ztp-types:p10-csr",
+            "ietf-ztp-types:cmc-csr",
+            "ietf-ztp-types:cmp-csr"
           ]
         }
       }

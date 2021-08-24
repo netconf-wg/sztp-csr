@@ -8,8 +8,6 @@ Content-Type: application/yang.data+json
     "os-name": "vendor-os",
     "os-version": "17.3R2.1",
     "nonce": "extralongbase64encodedvalue=",
-    "ietf-sztp-csr:csr": {
-      "p10": "BASE64VALUE="
-    }
+    "ietf-sztp-csr:p10-csr": "BASE64VALUE="
   }
 }

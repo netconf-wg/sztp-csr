@@ -11,7 +11,7 @@ Content-Type: application/yang.data+json
         "error-tag": "missing-attribute",
         "error-message": "Missing input parameter",
         "error-info": {
-          "ietf-sztp-csr:request-info": {
+          "ietf-sztp-csr:csr-request": {
             "key-generation": {
               "selected-algorithm": {
                 "algorithm-identifier": "BASE64VALUE="
@@ -19,7 +19,7 @@ Content-Type: application/yang.data+json
             },
             "csr-generation": {
               "selected-format": {
-                "format-identifier": "ietf-sztp-csr:cmc"
+                "format-identifier": "ietf-ztp-types:p10-csr"
               }
             },
             "cert-req-info": "BASE64VALUE="
