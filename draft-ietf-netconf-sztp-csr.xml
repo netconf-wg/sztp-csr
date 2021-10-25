@@ -489,7 +489,7 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
               target="RFC8572"/>.</t>
           </section>
           <section title="Selecting the Best Origin Authentication Mechanism">
-            <t>A The CSR's origin SHOULD be verified before a
+            <t>The origin of the CSR must be verified before a
               certificate is issued.</t>
             <t>When generating a new key, it is important that the
               SZTP-client be able to provide additional proof that it
@@ -523,13 +523,29 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
         </section>
         <section title="SZTP-Server Considerations">
           <section title="Verifying Proof of Possession">
-            <t>When the bootstrapping device's manufacturer-generated private
-              key (e.g., the IDevID key) is reused for the CSR, proof-of-possession
-              is verified by ensuring the CSR was signed by that key.</t>
-            <t>When a new asymmetric key is used, proof-of-possession may be
-              verified, with the CMP or CMC formats, by ensuring the parent
-              ASN.1 structure containing the CSR is signed by the
-              manufacturer-generated key.</t>
+            <t>Regardless if using a new asymmetric key or the bootstrapping
+              device's manufacturer-generated key (e.g., the IDevID key), the
+              public key is placed in the CSR and the CSR is signed by that
+              private key.  Proof-of-possession of the private key is verified
+              by ensuring the signature over the CSR using the public key
+              placed in the CSR.</t>
+          </section>
+          <section title="Verifying Proof of Origin">
+            <t>When the bootstrapping device's manufacturer-generated 
+              private key (e.g., the IDevID key) is reused for the CSR, 
+              proof-of-origin is verified by validating the IDevID-issuer cert
+              and ensuring that the CSR uses the same key pair.</t>
+            <t>When a new asymmetric key is used, proof-or-origin is
+              provided, in the CMP and CMC formats, by the CSR’s
+              parent ASN.1 structure containing origin authentication
+              using either the manufacturer-generated private key or
+              a shared secret.</t>
+            <t>When a new asymmetric key is used, with the CMP or CMC
+              formats, the parent ASN.1 structure of the CSR provides
+              origin authentication using either the manufacturer-generated
+              private key or a shared secret.  In this way the
+              proof-of-possession of the CSR is directly linked to
+              the proof-or-origin provided by the parent ASN.1 structure.</t>
           </section>
           <section title="Supporting SZTP-Clients that don't trust the SZTP-Server">
             <t><xref target="RFC8572"/> allows SZTP-clients to connect
