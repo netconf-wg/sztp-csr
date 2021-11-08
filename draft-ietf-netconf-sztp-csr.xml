@@ -535,11 +535,6 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
               private key (e.g., the IDevID key) is reused for the CSR, 
               proof-of-origin is verified by validating the IDevID-issuer cert
               and ensuring that the CSR uses the same key pair.</t>
-            <t>When a new asymmetric key is used, proof-or-origin is
-              provided, in the CMP and CMC formats, by the CSR’s
-              parent ASN.1 structure containing origin authentication
-              using either the manufacturer-generated private key or
-              a shared secret.</t>
             <t>When a new asymmetric key is used, with the CMP or CMC
               formats, the parent ASN.1 structure of the CSR provides
               origin authentication using either the manufacturer-generated
