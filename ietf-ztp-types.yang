@@ -370,7 +370,7 @@ module ietf-ztp-types {
              and recipient elements. The pvno contains cmp2000, and
              the sender contains the subject of the initial device
              identity certificate. The body element contains a p10cr
-             CHOICE of type CertificationRequet.  It is signed with
+             CHOICE of type CertificationRequest.  It is signed with
              the initial device identity certificate's private key.
              The extraCerts element contains the initial device
              identity certificate, optionally followed by its
@@ -391,7 +391,7 @@ module ietf-ztp-types {
              and the senderKID contains the subject key identifier
              of the initial device identity certificate. The body
              element contains a p10cr CHOICE of type
-             CertificationRequet. It is signed with the local device
+             CertificationRequest. It is signed with the local device
              identity certificate's private key.  The protection
              element contains the digital signature generated with
              the initial device identity certificate's private key.
@@ -410,7 +410,7 @@ module ietf-ztp-types {
              algorithm, and the senderKID contains a reference
              the recipient can use to identify the shared secret.
              The body element contains a p10cr CHOICE of type
-             CertificationRequet. It is signed with the local
+             CertificationRequest. It is signed with the local
              device identity certificate's private key.  The
              protection element contains the MAC value generated
              with the shared secret.";
