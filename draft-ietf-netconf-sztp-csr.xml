@@ -57,7 +57,7 @@
           <t>This draft extends the "get-bootstrapping-data" RPC defined in
             RFC 8572 to include an optional certificate signing request (CSR),
             enabling a bootstrapping device to additionally obtain an identity
-            certificate (e.g., an LDevID, from IEEE 802.1AR) as part of the 
+            certificate (e.g., an LDevID from IEEE 802.1AR) as part of the 
             "onboarding information" response provided in the RPC-reply.</t>
         </abstract>
         <note title="Editorial Note (To be removed by RFC Editor)">
@@ -118,8 +118,8 @@
             for a production environment during the bootstrapping process
             removes reliance on the manufacturer CA, and it also enables the
             bootstraped device to join the production environment with an
-            appropriate identity and other attributes in its LDevID
-            certificate.</t>
+            appropriate identity and other attributes in its identity
+            certificate (e.g., an LDevID).</t>
            <t>Two YANG <xref target="RFC7950"/> modules are defined.  The
              "ietf-ztp-types" module defines three YANG groupings for the
              various messages defined in this document.  The "ietf-sztp-csr"
@@ -438,6 +438,15 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
           <section title="Reuse of a Manufacturer-generated Private Key">
             <t>It is RECOMMENDED that a new private key is generated for each
               CSR described in this document.</t>
+            <t>This private key MUST be generated using a quality random
+              source. The use of inadequate pseudo-random number generators
+              (PRNGs) to generate private keys can result in little or no
+              security.  An attacker may find it much easier to reproduce
+              the PRNG environment that produced the private key, searching
+              the resulting small set of possibilities, rather than brute
+              force searching the whole private key space.  The generation
+              of quality random numbers is difficult.  BCP 109 <xref target="RFC4086">
+              offers important guidance in this area.</t>
             <t>This private key SHOULD be protected as well as the built-in
               private key associated with the SZTP-client's initial device identity
               certificate (e.g., the IDevID, from <xref target="Std-802.1AR-2018"/>).</t>
@@ -674,6 +683,7 @@ reference: RFC XXXX
           </front>
         </reference>
 
+        <?rfc include="reference.RFC.4086.xml"?>
         <?rfc include="reference.RFC.8340.xml"?>
         <?rfc include="reference.RFC.8407.xml"?>
         <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netconf-keystore.xml"/>
