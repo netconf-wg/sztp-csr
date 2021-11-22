@@ -252,10 +252,11 @@ module ietf-ztp-types {
          CSR using the same structure defined in its existing
          identity certificate (e.g., IDevID).
 
-         It is an error if the 'AlgorithmIdentifier' field
-         contained inside the 'SubjectPublicKeyInfo' field
-         does not match the algorithm identified by the
-         'selected-algorithm' node.";
+         If the 'AlgorithmIdentifier' field contained inside the
+         certificate 'SubjectPublicKeyInfo' field does not match
+         the algorithm identified by the 'selected-algorithm' node,
+         then the client MUST reject the certificate and raise an
+         error.";
       reference
         "RFC 2986:
            PKCS #10: Certification Request Syntax Specification
