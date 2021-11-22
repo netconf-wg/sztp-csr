@@ -255,7 +255,10 @@ INSERT_TEXT_FROM_FILE(refs/ietf-sztp-csr-errors-n-struct-tree.txt)
           <t>An SZTP-client implementing this specification would signal
             to the bootstrap server its willingness to generate a CSR by
             including the "csr-support" node in its "get-bootstrapping-data"
-            RPC, as illustrated below.</t>
+            RPC. In the example below, the SZTP-client additionally
+            indicates that it is able to generate keys and provides
+            a list of key algorithms it supports, as well as provide
+            a list of certificate formats it supports.</t>
           <t>
             <figure>
               <preamble>REQUEST</preamble>
@@ -267,7 +270,10 @@ INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-without-csr-rpc.json)
 
           <t>Assuming the SZTP-server wishes to prompt the SZTP-client to
             provide a CSR, then it would respond with an HTTP 400 Bad Request
-            error code:</t>
+            error code.  In the example below, the SZTP-server specifies
+            that it wishes the SZTP-client to generate a key using a specific
+            algorithm and generate a P10-based CSR containing specific
+            content.</t>
           <t>
             <figure>
               <preamble>RESPONSE</preamble>
