@@ -451,7 +451,7 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
               the PRNG environment that produced the private key, searching
               the resulting small set of possibilities, rather than brute
               force searching the whole private key space.  The generation
-              of quality random numbers is difficult.  BCP 109 <xref target="RFC4086">
+              of quality random numbers is difficult.  BCP 109 <xref target="RFC4086"/>
               offers important guidance in this area.</t>
             <t>This private key SHOULD be protected as well as the built-in
               private key associated with the SZTP-client's initial device identity
