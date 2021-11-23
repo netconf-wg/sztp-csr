@@ -236,14 +236,14 @@ module ietf-ztp-types {
          'CertificationRequest' structure to send to ZTP-server
          in its next 'get-bootstrapping-data' request message.
 
-         When provided, the ZTP-client SHOULD use this
-         structure to generate its CSR; failure to do so MAY
-         result in a 400 Bad Request response containing
-         another 'csr-request' structure.
+         When provided, the ZTP-client SHOULD use this structure
+         to generate its CSR; failure to do so MAY result in a
+         400 Bad Request response containing another 'csr-request'
+         structure.
 
-         When not provided, the ZTP-client SHOULD generate a
-         CSR using the same structure defined in its existing
-         identity certificate (e.g., an IDevID).
+         When not provided, the ZTP-client SHOULD generate a CSR
+         using the same structure defined in its existing identity
+         certificate (e.g., an IDevID from IEEE 802.1AR).
 
          If the 'AlgorithmIdentifier' field contained inside the
          certificate 'SubjectPublicKeyInfo' field does not match
