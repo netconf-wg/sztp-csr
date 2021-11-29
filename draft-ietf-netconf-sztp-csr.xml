@@ -117,7 +117,7 @@
           <t>The ability to provision an identity certificate that is purpose-built
             for a production environment during the bootstrapping process
             removes reliance on the manufacturer CA, and it also enables the
-            bootstraped device to join the production environment with an
+            bootstrapped device to join the production environment with an
             appropriate identity and other attributes in its identity
             certificate (e.g., an LDevID).</t>
            <t>Two YANG <xref target="RFC7950"/> modules are defined.  The
