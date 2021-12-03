@@ -437,7 +437,7 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
             <t>In cases where the SZTP-client does not possess an HSM, or
               is unable to use an HSM to protect the private key, it is
               RECOMMENDED to periodically reset the private key (and
-              associated identity certiticates) in order to minimize the
+              associated identity certificates) in order to minimize the
               lifetime of unprotected private keys.  For instance, an NMS
               controller/orchestrator application could periodically prompt
               the SZTP-client to generate a new private key and provide a
@@ -703,7 +703,7 @@ reference: RFC XXXX
         </reference>
         <reference anchor="CVE-2008-0166" target="https://nvd.nist.gov/vuln/detail/CVE-2008-0166">
           <front>
-            <title>National Vulerability Database - CVE-2008-0166</title>
+            <title>National Vulnerability Database - CVE-2008-0166</title>
             <author>
                <organization>National Institute of Science and Technology (NIST)</organization>
             </author>
