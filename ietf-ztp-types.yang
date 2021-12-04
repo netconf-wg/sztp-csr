@@ -277,10 +277,15 @@ module ietf-ztp-types {
         leaf p10-csr {
           type ct:csr;
           description
-            "A CertificationRequest structure, per RFC 2986.";
+            "A CertificationRequest structure, per RFC 2986.
+
+             A raw P10 does not support origin authentication in
+             the CSR structure.  External origin authentication
+             may be provided via the ZTP-client's authentication
+             to the ZTP-server at the transport layer (e.g., TLS).";
           reference
-            "RFC 2986: PKCS #10: Certification
-                       Request Syntax Specification";
+            "RFC 2986: PKCS #10: Certification Request Syntax
+                       Specification";
         }
       }
       case cmc-csr {
