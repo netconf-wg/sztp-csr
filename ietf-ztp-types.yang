@@ -278,6 +278,8 @@ module ietf-ztp-types {
           type ct:csr;
           description
             "A CertificationRequest structure, per RFC 2986.
+             Encoding details are defined in the 'ct:csr'
+             typedef defined in RFC AAAA.
 
              A raw P10 does not support origin authentication in
              the CSR structure.  External origin authentication
@@ -285,7 +287,9 @@ module ietf-ztp-types {
              to the ZTP-server at the transport layer (e.g., TLS).";
           reference
             "RFC 2986: PKCS #10: Certification Request Syntax
-                       Specification";
+                       Specification
+             RFC AAAA: YANG Data Types and Groupings for
+                       Cryptography";
         }
       }
       case cmc-csr {
