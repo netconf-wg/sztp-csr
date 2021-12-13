@@ -204,7 +204,7 @@ INSERT_TEXT_FROM_FILE(refs/ietf-sztp-csr-tree.txt)
           <ul>
             <li>The "csr-support" node is used by the SZTP-client to signal
               to the SZTP-server that it supports the ability the generate CSRs.
-              This parameter conveys if the SZTP-client is able to generate an
+              This parameter conveys if the SZTP-client is able to generate a
               new asymmetric key and, if so, which key algorithms it supports, 
               as well as conveys what kinds of CSR structures the SZTP-client
               is able to generate.</li>
@@ -272,7 +272,7 @@ INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-without-csr-rpc.json)
             provide a CSR, then it would respond with an HTTP 400 Bad Request
             error code.  In the example below, the SZTP-server specifies
             that it wishes the SZTP-client to generate a key using a specific
-            algorithm and generate a P10-based CSR containing specific
+            algorithm and generate a PKCS#10-based CSR containing specific
             content.</t>
           <t>
             <figure>
@@ -380,7 +380,7 @@ INSERT_TEXT_FROM_FILE(ietf-sztp-csr@YYYY-MM-DD.yang)
 
         <t>This section defines a YANG 1.1 <xref target="RFC7950"/> module
           that defines three YANG groupings, one each for messages sent
-          between a ZTP-client and ZTP-server.  This module is defines
+          between a ZTP-client and ZTP-server.  This module is defined
           independently of the "ietf-sztp-csr" module so that it's 
           groupings may be used by bootstrapping protocols other than
           SZTP <xref target="RFC8572"/>.</t>
