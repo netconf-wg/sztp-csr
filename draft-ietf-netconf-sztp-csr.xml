@@ -755,14 +755,20 @@ reference: RFC XXXX
           <seriesInfo name="NIST" value="NIST SP 800-90Ar1"/>
           <seriesInfo name="DOI" value="10.6028/NIST.SP.800-90Ar1"/>
         </reference>
-        <reference anchor="AIS31" target="">
+        <reference anchor="AIS31" target="https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_31_Functionality_classes_for_random_number_generators_e.pdf">
           <front>
-            <title>Application Notes and Interpretation of the Scheme (AIS) 31 – Functionality 
-              Classes and Evaluation Methodology for Physical Random Number Generators</title>
+            <title>A proposal for: Functionality classes for random number generators, version 2.0</title>
             <author>
               <organization>Bundesamt für Sicherheit in der Informationstechnik (BSI)</organization>
             </author>
-            <date year="2001" month="September" day="25"/>
+            <author initials="W" surname="Killmann" fullname="Wolfgang Killmann">
+              <organization>T-Systems GEI GmbH</organization>
+            </author>
+            <author initials="W." surname="Schindler" fullname="Werner Schindler">
+              <organization>Bundesamt für Sicherheit in der Informationstechnik (BSI)</organization>
+<!--          <organization>Federal Office for Information Security (BSI)</organization> -->
+            </author>
+            <date day="18"  month="09" year="2011"/>
           </front>
         </reference>
         <?rfc include="reference.RFC.4086.xml"?>
