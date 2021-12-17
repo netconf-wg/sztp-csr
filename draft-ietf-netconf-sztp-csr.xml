@@ -89,7 +89,6 @@
               <t>I-D.ietf-netconf-crypto-types</t>
               <t>I-D.ietf-netconf-keystore</t>
               <t>I-D.ietf-netconf-trust-anchors</t>
-              <t>I-D.ietf-netmod-factory-default</t>
             </list>
           </t>
 
@@ -203,7 +202,7 @@ INSERT_TEXT_FROM_FILE(refs/ietf-sztp-csr-tree.txt)
           <t>In the order of their intended use:</t>
           <ul>
             <li>The "csr-support" node is used by the SZTP-client to signal
-              to the SZTP-server that it supports the ability the generate CSRs.
+              to the SZTP-server that it supports the ability to generate CSRs.
               This parameter conveys if the SZTP-client is able to generate a
               new asymmetric key and, if so, which key algorithms it supports, 
               as well as conveys what kinds of CSR structures the SZTP-client
@@ -447,7 +446,7 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
               example, the SZTP-client could be configured to periodically
               reset the configuration to its factory default, thus causing
               removal of the private key and associated identity certificates
-              and reexecution of the SZTP protocol.</t>
+              and re-execution of the SZTP protocol.</t>
           </section>
           <section title="Reuse of a Manufacturer-generated Private Key">
             <t>It is RECOMMENDED that a new private key is generated for each
@@ -546,7 +545,7 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
               for the purpose), are considered user data and SHOULD be cleared
               whenever the SZTP-client is reset to its factory default state,
               such as by the "factory-reset" RPC defined in
-              <xref target="I-D.ietf-netmod-factory-default"/>.</t>
+              <xref target="RFC8808"/>.</t>
           </section>
         </section>
         <section title="SZTP-Server Considerations">
@@ -692,7 +691,7 @@ reference: RFC XXXX
       </references>
 
       <references title="Informative References">
-        <reference anchor="Std-802.1AR-2018" target="http://standards.ieee.org/findstds/standard/802.1AR-2018.html">
+        <reference anchor="Std-802.1AR-2018" target="https://standards.ieee.org/standard/802_1AR-2018.html">
           <front>
             <title>IEEE Standard for Local and metropolitan area networks - Secure Device Identity</title>
             <author fullname="WG802.1 - Higher Layer LAN Protocols Working Group">
@@ -775,9 +774,9 @@ reference: RFC XXXX
         <?rfc include="reference.RFC.7292.xml"?>
         <?rfc include="reference.RFC.8340.xml"?>
         <?rfc include="reference.RFC.8407.xml"?>
+        <?rfc include="reference.RFC.8808.xml"?>
         <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netconf-keystore.xml"/>
         <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netconf-trust-anchors.xml"/>
-        <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netmod-factory-default.xml"/>
       </references>
 
       <section title="Acknowledgements" numbered="no">
@@ -798,7 +797,7 @@ reference: RFC XXXX
         </t>
       </section>
       <section title="Contributors" numbered="no">
-        <t>Special thanks goes to David von Oheimb and Hendrik Brockhaus
+        <t>Special thanks go to David von Oheimb and Hendrik Brockhaus
           for helping with the descriptions for the "cmc-csr" and "cmp-csr"
           nodes.</t>
       </section>
