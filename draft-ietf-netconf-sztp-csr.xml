@@ -317,7 +317,7 @@ INSERT_TEXT_FROM_FILE(refs/ex-api-gbd-with-csr-rpc-reply.json)
             while other implementations may choose to convey it inside the SZTP
             "configuration" node.  SZTP onboarding information is described in 
             <relref section="2.2" target="RFC8572"/>.</t>
-          <t>Following are two examples of conveying the signed certificate inside
+          <t>Below are two examples of conveying the signed certificate inside
             the "configuration" node.  Both examples assume that the SZTP-client
             understands the "ietf-keystore" module defined in
             <xref target="I-D.ietf-netconf-keystore"/>.</t>
@@ -436,7 +436,7 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
               authenticate the device it is issued to.</t>
             <t>It is RECOMMENDED that devices are manufactured with an HSM
               (hardware security module), such as a TPM (trusted platform
-              module), to generate and forever contain the private key within
+              module), to generate and contain the private key within
               the security perimeter of the HSM.  In such cases, the private
               key, and its associated certificates, MAY have long validity
               periods.</t>
@@ -805,8 +805,10 @@ reference: RFC XXXX
           Guy Fedorkow,
           Joe Clarke,
           Meral Shirazipour,
+          Murray Kucherawy,
           Rich Salz,
           Rob Wilton,
+          Roman Danyliw,
           Qin Wu,
           Yaron Sheffer,
           and Zaheduzzaman Sarkar.
