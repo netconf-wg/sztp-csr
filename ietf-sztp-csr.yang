@@ -117,8 +117,8 @@ module ietf-sztp-csr {
            a signed certificate for the conveyed CSR.  The
            SZTP-server MAY alternatively respond with another
            HTTP error containing another 'csr-request', in
-           which case the SZTP-client MUST invalidate the
-           previously generated CSR.";
+           which case the SZTP-client MUST delete any key
+           generated for the previously generated CSR.";
         uses zt:csr-grouping;
       }
     }

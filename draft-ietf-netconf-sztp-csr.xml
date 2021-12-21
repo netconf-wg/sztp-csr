@@ -54,7 +54,7 @@
         <keyword>cmc</keyword>
         <keyword>cmp</keyword>
         <abstract>
-          <t>This draft extends the "get-bootstrapping-data" RPC defined in
+          <t>This draft extends the input to the "get-bootstrapping-data" RPC defined in
             RFC 8572 to include an optional certificate signing request (CSR),
             enabling a bootstrapping device to additionally obtain an identity
             certificate (e.g., an LDevID from IEEE 802.1AR) as part of the 
@@ -106,7 +106,7 @@
       <section title="Introduction">
 
         <section title="Overview">
-          <t>This draft extends the "get-bootstrapping-data" RPC defined in
+          <t>This draft extends the input to the "get-bootstrapping-data" RPC defined in
             <xref target="RFC8572"/> to include an optional certificate
             signing request (CSR) <xref target="RFC2986"/>, enabling a
             bootstrapping device to additionally obtain an identity
@@ -359,10 +359,7 @@ INSERT_TEXT_FROM_FILE(refs/ex-keystore-ldevid-new-key.json)
           <t>This module augments an RPC defined in <xref target="RFC8572"/>. The
             module uses a data types and groupings defined in <xref target="RFC8572"/>,
             <xref target="RFC8791"/>, and <xref target="I-D.ietf-netconf-crypto-types"/>.
-            The module has additional normative references to <xref target="RFC2986"/>,
-            <xref target="RFC5272"/>, <xref target="RFC4210"/>, and
-            <xref target="ITU.X690.2015"/>, and an informative reference
-            to <xref target="Std-802.1AR-2018"/>.</t>
+            The module also has an informative reference to <xref target="Std-802.1AR-2018"/>.</t>
           <t>
             <figure>
               <preamble>&lt;CODE BEGINS&gt; file "ietf-sztp-csr@YYYY-MM-DD.yang"</preamble>
@@ -417,16 +414,26 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
 
       <section title="Security Considerations" anchor="sec-con">
         <t>This document builds on top of the solution presented in
-        <xref target="RFC8572"/> and therefore all the Security
+          <xref target="RFC8572"/> and therefore all the Security
           Considerations discussed in RFC 8572 apply here as well.</t> 
+        <t>For the various CSR formats, when using PKCS#10, the security considerations
+          in <xref target="RFC2986"/> apply, when using CMP, the
+          security considerations in <xref target="RFC4210"/> apply
+          and, when using CMC, the security considerations in
+          <xref target="RFC5272"/> apply.</t>
+        <t>For the various authentication mechanisms, when using
+          TLS-level authentication, the security considerations in
+          <xref target="RFC8446"/> apply and, when using HTTP-level
+          authentication, the security considerations in
+          <xref target="RFC7235"/> apply.</t>
         <section title="SZTP-Client Considerations">
           <section title="Ensuring the Integrity of Asymmetric Private Keys">
             <t>The private key the SZTP-client uses for the dynamically-generated
               identity certificate MUST be protected from inadvertent disclosure
               in order to prevent identity fraud.</t>
             <t>The security of this private key is essential in order to
-              ensure the associated identity certificate can be used as a
-              root of trust.</t>
+              ensure the associated identity certificate can be used to
+              authenticate the device it is issued to.</t>
             <t>It is RECOMMENDED that devices are manufactured with an HSM
               (hardware security module), such as a TPM (trusted platform
               module), to generate and forever contain the private key within
@@ -442,7 +449,7 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
               the SZTP-client to generate a new private key and provide a
               certificate signing request (CSR) or, alternatively, push
               both the key and an identity certificate to the SZTP-client
-              using, e.g., a PKCS #12 <xref target="RFC7292"/>.  In another
+              using, e.g., a PKCS #12 message <xref target="RFC7292"/>.  In another
               example, the SZTP-client could be configured to periodically
               reset the configuration to its factory default, thus causing
               removal of the private key and associated identity certificates
@@ -492,7 +499,10 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
               used for the request, there may not be confirmation to the
               SZTP-client that the response has not been replayed; however,
               the worst case result is a lost certificate that is associated
-              to the private key known only to the SZTP-client.</t>
+              to the private key known only to the SZTP-client.  Protection
+              of the private-key information is vital to public-key
+              cryptography.  Disclosure of the private-key material to
+              another entity can lead to masquerades.</t>
           </section>
           <section title="Connecting to an Untrusted Bootstrap Server" anchor="untrusted">
             <t><xref target="RFC8572"/> allows SZTP-clients to connect
@@ -523,7 +533,7 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
               was the entity that generated the key.</t>
             <t>The CMP and CMC certificate request formats defined in this
               document support origin authentication.  A raw 
-              PKCS#10 does not support origin authentication.</t>
+              PKCS#10 CSR does not support origin authentication.</t>
             <t>The CMP and CMC request formats support origin
               authentication using both PKI and shared secret.</t>
             <t>Typically, only one possible origin authentication
@@ -562,12 +572,15 @@ INSERT_TEXT_FROM_FILE(ietf-ztp-types@YYYY-MM-DD.yang)
               private key (e.g., the IDevID key) is reused for the CSR, 
               proof-of-origin is verified by validating the IDevID-issuer cert
               and ensuring that the CSR uses the same key pair.</t>
-            <t>When a new asymmetric key is used, with the CMP or CMC
-              formats, the parent ASN.1 structure of the CSR provides
-              origin authentication using either the manufacturer-generated
-              private key or a shared secret.  In this way the
-              proof-of-possession of the CSR is directly linked to
-              the proof-or-origin provided by the parent ASN.1 structure.</t>
+            <t>When the bootstrapping device's manufacturer-generated private key
+              (e.g., an IDevID key from IEEE 802.1AR) is reused for the CSR, proof-of-origin is
+              verified by validating the IDevID certification path and ensuring that
+              the CSR uses the same key pair.</t>
+            <t>When a fresh asymmetric key is used with the CMP or CMC formats, the
+              authentication is part of the protocols, which could employ either
+              the manufacturer-generated private key or a shared secret.  In addition,
+              CMP and CMC support processing by a RA before the request is passed
+              to the CA, which allows for more robust handling of errors.</t>
           </section>
           <section title="Supporting SZTP-Clients that don't trust the SZTP-Server">
             <t><xref target="RFC8572"/> allows SZTP-clients to connect
@@ -665,9 +678,11 @@ reference: RFC XXXX
         <?rfc include="reference.RFC.4210.xml"?>
         <?rfc include="reference.RFC.5272.xml"?>
         <?rfc include="reference.RFC.6020.xml"?>
+        <?rfc include="reference.RFC.7235.xml"?>
         <?rfc include="reference.RFC.7950.xml"?>
         <?rfc include="reference.RFC.8040.xml"?>
         <?rfc include="reference.RFC.8174.xml"?>
+        <?rfc include="reference.RFC.8446.xml"?>
         <?rfc include="reference.RFC.8572.xml"?>
         <?rfc include="reference.RFC.8791.xml"?>
         <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-netconf-crypto-types.xml"/>
@@ -782,6 +797,7 @@ reference: RFC XXXX
       <section title="Acknowledgements" numbered="no">
         <t>The authors would like to thank for following for lively
           discussions on list and in the halls (ordered by first name):
+          Benjamin Kaduk,
           David von Oheimb,
           Dan Romascanu,
           Eric Vyncke,
