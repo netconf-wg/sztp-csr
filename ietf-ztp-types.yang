@@ -323,7 +323,7 @@ module ietf-ztp-types {
              that signs the encapsulated CSR signed by the local
              device identity certificate's private key, the
              PKIData contains one cmsSequence element and no
-             controlSequence, reqSequence, or otherMsgSequence
+             reqSequence or otherMsgSequence
              elements.  The cmsSequence is the TaggedContentInfo
              and it includes a bodyPartID element and a contentInfo.
              The contentInfo is a SignedData encapsulating a PKIData
