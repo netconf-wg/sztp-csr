@@ -104,8 +104,8 @@ fi
 printf "okay.\n"
 
 printf "validating ex-api-gbd-with-csr-rpc-reply.json..."
-cat ex-api-gbd-with-csr-rpc-reply.json | sed '1,5d' | grep -v "output" | sed '/^  }/d' > ex-api-gbd-with-csr-rpc-reply-4nc.json
-response=`yanglint -t rpcreply -p ../ ietf-sztp-bootstrap-server\@*.yang ../ietf-ztp-types\@*.yang ../ietf-sztp-csr\@*.yang ex-api-gbd-with-csr-rpc-reply-4nc.json ex-api-gbd-with-csr-rpc-4nc.json 2>&1`
+cat ex-api-gbd-with-csr-rpc-reply.json | sed '1,5d' | sed 's/output/get-bootstrapping-data/' > ex-api-gbd-with-csr-rpc-reply-4nc.json
+response=`yanglint -t reply ietf-sztp-bootstrap-server\@*.yang ../ietf-ztp-types\@*.yang ../ietf-sztp-csr\@*.yang ex-api-gbd-with-csr-rpc-reply-4nc.json 2>&1`
 exit_code=$?
 rm ex-api-gbd-with-csr-rpc-4nc.json
 rm ex-api-gbd-with-csr-rpc-reply-4nc.json

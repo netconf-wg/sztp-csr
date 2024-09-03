@@ -169,11 +169,12 @@
         </section>
 
         <section title="Conventions">
-          <t>Various examples used in this document use a placeholder
-            value for binary data that has been base64 encoded (e.g.,
-            "BASE64VALUE=").  This placeholder value is used as real
-            base64 encoded structures are often many lines long and
-            hence distracting to the example being presented.</t>
+          <t>Various examples in this document use "BASE64VALUE=" as a
+            placeholder value for binary data that has been base64
+            encoded (per <xref section="9.8" target="RFC7950"/>).  This
+            placeholder value is used because real base64 encoded structures
+            are often many lines long and hence distracting to the example
+            being presented.</t>
         </section>
 
       </section>  <!-- end Introduction -->
